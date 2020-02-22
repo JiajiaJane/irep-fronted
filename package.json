@@ -166,5 +166,5 @@
     "prettier": "^1.18.2",
     "redux-devtools-extension": "^2.13.8"
   },
-  "proxy":"118.31.59.186"
+  "proxy": "http://irep.whu.edu.cn"
 }
