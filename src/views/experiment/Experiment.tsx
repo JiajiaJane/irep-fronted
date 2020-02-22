@@ -8,11 +8,10 @@ import { requestFn } from '../../utils/request'
 import { Actions } from '../../store/Actions'
 import { useDispatch } from '../../store/Store'
 
-
 /** 实验入口页 */
 const ExperimentComponent = (props: RouteComponentProps) => {
   const [nextLoading, setNextLoading] = useState(false)
-  
+
   /**
    * 错误提示
    */
@@ -22,7 +21,6 @@ const ExperimentComponent = (props: RouteComponentProps) => {
       description
     })
   }
-
 
   const handleClick = async () => {
     // 存开始时间
@@ -58,14 +56,22 @@ const ExperimentComponent = (props: RouteComponentProps) => {
         <div className={styles.line}></div>
         <h2 className={styles.subHeading}>准确理解搜索引擎</h2>
         <h2 className={styles.subHeading}>让信息检索技术触手可及</h2>
-        <Button className={styles.button} type="default" onClick={handleClick}  loading={nextLoading}>
-          <span>
-            开启你的搜索引擎
-            <br />
-            设计之旅
-          </span>
-          <Icon className={styles.icon} type="search" />
-        </Button>
+
+        <div className={styles.div}>
+          <div className={styles.div1}>
+            <Button className={styles.button} type="default" onClick={handleClick} loading={nextLoading}>
+              <span> 学习模式 </span>
+              <Icon className={styles.icon} type="read" />
+            </Button>
+          </div>
+
+          <div className={styles.div2}>
+            <Button className={styles.button} type="default" onClick={handleClick} loading={nextLoading}>
+              <span> 考核模式 </span>
+              <Icon className={styles.icon} type="edit" />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   )
