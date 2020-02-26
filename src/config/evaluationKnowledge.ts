@@ -7,7 +7,7 @@ export const evaluationKnowledge = [
     title: '简介',
     content: `
       <p style="text-indent: 2em;">
-        采用相关的指标对布尔检索模型、向量空间模型、概率检索模型以及语言检索模型的检索结果进行测评。
+        采用相关的指标对<strong>布尔检索模型、向量空间模型、概率检索模型以及语言检索模型</strong>的检索结果进行测评。
       </p>
     `
   },

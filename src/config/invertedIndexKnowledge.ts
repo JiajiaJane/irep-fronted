@@ -5,7 +5,7 @@ export const invertedIndexKnowledge = [
   {
     title: '介绍',
     content: `<p style="text-indent: 2em;">
-                倒排索引（inverted index）也常被称为反向索引、置入档案或反向档案，是一种索引方法，被用来存储在全文搜索下某个单词在一个文档或者一组文档中的存储位置的映射。它是文档检索系统中最常用的数据结构。通过倒排索引，可以根据单词快速获取包含这个单词的文档列表。倒排索引主要由两个部分组成：&ldquo;词项词典（dictionary）&rdquo;和&ldquo;全体倒排记录表（postings）&rdquo;。每个词项都所对应的记录出现该词的文档列表称为倒排记录表（posting list）或倒排表（inverted list）。
+                <strong>倒排索引（inverted index）</strong>也常被称为<strong>反向索引、置入档案</strong>或<strong>反向档案</strong>，是一种索引方法，被用来存储在全文搜索下某个单词在一个文档或者一组文档中的存储位置的映射。它是文档检索系统中最常用的数据结构。通过倒排索引，可以根据单词快速获取包含这个单词的文档列表。倒排索引主要由两个部分组成：<strong> "词项词典（dictionary)"</strong>和<strong>"全体倒排记录表（postings)"</strong>。每个词项都所对应的记录出现该词的文档列表称为<strong>倒排记录表（posting list)</strong>或<strong>倒排表（inverted list）</strong>。
               </p>
               <p style="text-indent: 2em;">
                 倒排表中每个元素记录的是该词项在此元素中的出现信息（包括出现次数和出现位置），主要包含有：
@@ -13,7 +13,7 @@ export const invertedIndexKnowledge = [
               <p>文档频率（document frequency）：出现某词项的文档数目，也就是每个倒排记录表的长度。</p>
               <p>词项频率（term frequency）：词项在文档中出现的次数。</p>
               <p>位置信息索引（positional index）：简称位置索引，倒排记录中特定词项出现在特定文档的中位置信息。</p>
-              <p style="text-indent: 2em;">
+              <p style="text-indent: 2em;font-weight:bold">
                 建立倒排索引的主要步骤：收集待建索引的文档、对这些文档中文本进行词条化、对词条进行语言学预处理，得到词项、根据词项对所有文档建立索引。从技术层面去分析，构造一个倒排索引，主要分为两部分： term词项构造和倒排记录表的构建。
               </p>`
   },
