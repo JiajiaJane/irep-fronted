@@ -5,7 +5,7 @@ export const vectorSpaceKnowledge = [
   {
     title: '简介',
     content: `
-      <p><strong>向量空间模型（vector space model 简称：VSM）：</strong>一系列文档在同一向量空间中的表示被称为向量空间模型。其把对文本内容的处理简化为向量空间中的向量运算，并且它以空间上的相似度表达语义的相似度。</p>
+      <p><strong>向量空间模型（vector space model 简称：VSM）：</strong>一系列文档在同一向量空间中的表示被称为向量空间模型。其把对文本内容的处理简化为向量空间中的向量运算，并且它以<strong>空间上的相似度表</strong>达语义的相似度。</p>
       <p><strong>文档频率（document</strong><strong>&nbsp;</strong><strong>frequency）</strong>
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <mi> d </mi>
@@ -435,7 +435,7 @@ export const vectorSpaceKnowledge = [
     title: '缺点',
     content: `
       <p>
-        不适用于较长的文件；检索词组必须与文件中出现的词组精确匹配；语义敏感度不佳；易导致&ldquo;假阴性匹配&rdquo;；忽略词组间的相关性。
+      <strong>不适用于较长的文件</strong>；检索词组必须与文件中出现的词组精确匹配；语义敏感度不佳；易导致&ldquo;假阴性匹配&rdquo;；忽略词组间的相关性。
       </p>
     `
   }

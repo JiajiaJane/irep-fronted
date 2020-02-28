@@ -5,7 +5,7 @@ export const invertedIndexKnowledge = [
   {
     title: '介绍',
     content: `<p style="text-indent: 2em;">
-                <strong>倒排索引（inverted index）</strong>也常被称为<strong>反向索引、置入档案</strong>或<strong>反向档案</strong>，是一种索引方法，被用来存储在全文搜索下某个单词在一个文档或者一组文档中的存储位置的映射。它是文档检索系统中最常用的数据结构。通过倒排索引，可以根据单词快速获取包含这个单词的文档列表。倒排索引主要由两个部分组成：<strong> "词项词典（dictionary)"</strong>和<strong>"全体倒排记录表（postings)"</strong>。每个词项都所对应的记录出现该词的文档列表称为<strong>倒排记录表（posting list)</strong>或<strong>倒排表（inverted list）</strong>。
+                <strong>倒排索引（inverted index）</strong>也常被称为<strong>反向索引、置入档案</strong>或<strong>反向档案</strong>，是一种索引方法，被用来存储在全文搜索下某个单词在一个文档或者一组文档中的<strong>存储位置</strong>的映射。它是文档检索系统中最常用的数据结构。通过倒排索引，可以根据<strong>单词</strong>快速获取包含这个单词的<strong>文档列表。</strong>倒排索引主要由两个部分组成：<strong> "词项词典（dictionary)"</strong>和<strong>"全体倒排记录表（postings)"</strong>。每个词项都所对应的记录出现该词的文档列表称为<strong>倒排记录表（posting list)</strong>或<strong>倒排表（inverted list）</strong>。
               </p>
               <p style="text-indent: 2em;">
                 倒排表中每个元素记录的是该词项在此元素中的出现信息（包括出现次数和出现位置），主要包含有：

@@ -774,19 +774,19 @@ export const probabilityKnowledge = [
           </msub>
         </math>
       </p>
-      <p>3.计算相似度</p>
+      <p>3.<strong>计算相似度</strong></p>
       <p>4.按相似度降序排序</p>
     `
   },
   {
     title: '优点',
-    content: `<p style="text-indent: 2em;">文档可以按照他们相关概率递减的顺序来计算秩（rank）。</p>`
+    content: `<p style="text-indent: 2em;"><strong>文档可以按照他们相关概率递减的顺序来计算秩（rank）</strong>。</p>`
   },
   {
     title: '缺点',
     content: `
       <p style="text-indent: 2em;">
-        开始时需要猜想把文档分为相关和不相关的两个集合，实际上这种模型没有考虑索引术语在文档中的频率（因为所有的权重都是二元的），而索引术语都是相互独立的。
+        开始时需要猜想把文档分为相关和不相关的两个集合，实际上这种模型<strong>没有考虑索引术语在文档中的频率</strong>（因为所有的权重都是二元的），而索引术语都是相互独立的。
       </p>
     `
   }

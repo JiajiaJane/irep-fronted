@@ -6,7 +6,7 @@ export const booleanKnowledge = [
     title: '简介',
     content: `
       <p style="text-indent: 2em;">
-      <strong>布尔模型</strong>是基于集合论和布尔代数的一种简单检索模型，它的特点是查找那些对于某个查询词返回为<strong>"真"的文档</strong>。在该模型中，一个查询词就是一个布尔表达式，包括关键词以及逻辑运算符。由于文档必须严格符合检索词的要求才能够被检索出来，因此布尔检索模型又被称为<strong>"完全匹配检索"(Exact-Match Retrieval)</strong>。
+      <strong>布尔模型</strong>是基于集合论和布尔代数的一种简单检索模型，它的特点是查找那些对于某个查询词返回为<strong>"真"的文档</strong>。在该模型中，一个查询词就是一个布尔表达式，包括关键词以及<strong>逻辑运算符。</strong>由于文档必须严格符合检索词的要求才能够被检索出来，因此布尔检索模型又被称为<strong>"完全匹配检索"(Exact-Match Retrieval)</strong>。
       </p>
       <p>布尔模型的<strong>检索流程</strong>为：</p>
       <p>1. 基于文档语料建立倒排索引；</p>
@@ -25,7 +25,7 @@ export const booleanKnowledge = [
     title: '优点',
     content: `
       <p>1. &nbsp;简单，简化了复杂的检索过程</p>
-      <p>2. &nbsp;易于理解，结构化的提问方式与用户的思维习惯一致</p>
+      <p>2. &nbsp;<strong>易于理解</strong>，结构化的提问方式与用户的思维习惯一致</p>
     `
   },
   {
