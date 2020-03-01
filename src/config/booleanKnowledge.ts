@@ -14,12 +14,7 @@ export const booleanKnowledge = [
       <p>
         3. 根据检索表达式中的逻辑运算符对结果列表和相应postings中的文档ID进行逻辑操作，更新计算结果至结果列表中，循环以上操作至最后一个检索词；
       </p>
-      <p>4. 返回检索结果列表，即满足用户检索需求的文档。</p>
-      <p>例如对简单的查询：Brutus AND Calpurnia,布尔查询可表示为：</p>
-      <p style="text-align: center;">
-        <img src="https://t1.picb.cc/uploads/2019/07/26/grGDTM.png" style="max-width: 100%;">
-      </p>
-      <p style="text-align: center;"><strong>图表 3&nbsp;</strong>Boolean</p>`
+      <p>4. 返回检索结果列表，即满足用户检索需求的文档。</p>`
   },
   {
     title: '优点',

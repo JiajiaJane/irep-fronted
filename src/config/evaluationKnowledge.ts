@@ -568,6 +568,13 @@ export const evaluationKnowledge = [
       </p>
       <p><strong>2、平均检索性能评价指标</strong></p>
       <p style="text-indent: 2em;">平均检索性能评价指标，是在多个查询式（本系统使用10个）的检索性能评价指标的基础上的期望。</p>
+      <p></p>
+      <p>
+        <h5>整体回顾：</h5>
+        <strong>信息检索模型给出了文档的表示方法，查询的表示方式以及查询与文档的匹配过程，</strong><strong>本质上是对相关度建模。</strong>
+        <strong>一个信息检索模型是由文档表示、查询、关系、模型框架组成的四元组。</strong>
+        <strong>信息检索模型所使用的数学方法可以分为集合论、代数论、概率统计。</strong>
+      </p>
     `
   }
 ]
