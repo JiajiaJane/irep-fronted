@@ -7,6 +7,7 @@ export const languageKnowledge = [
     content: `
       <p style="text-indent: 2em;">
       <strong>语言模型</strong>是采用<strong>概率统计方法</strong>描述自然语言内在规律的一种数学模型，<strong>语言模型是根据语言客观事实而进行的语言抽象数学建模，是一种对应关系,</strong><strong>是一个单纯的、统一的、抽象的形式系统。</strong>在许多涉及自然语言处理的领域中有着广泛的应用。区别于其他大多数检索模型从查询到文档（即给定用户查询，如何找出相关的文档），语言模型由文档到查询，即为每个文档建立不同的语言模型，判断由文档生成用户查询的可能性有多大，然后按照这种生成概率由高到低排序，作为检索结果。
+      <strong>语言模型的类型有：生成性模型、分析性模型、辨识性模型</strong>
       </p>
       <p style="text-indent: 2em;">
       <strong> 基本思想：</strong>假设每个文档都存在一个语言模型，从文档的语言模型抽样产生<strong>检索的概率</strong>表示文档与查询的相似度。与传统的检索模型不同的是，语言模型是由文档到查询，即为每个文档建立不同的语言模型，判断由文档生成用户查询的可能性有多大，然后按照这种生成概率由高到低排序，作为搜索结果。
@@ -86,7 +87,8 @@ export const languageKnowledge = [
               <mi> q </mi>
             </mrow>
           </mfenced>
-        </math>
+        </math>，
+        <strong>调整出现概率的平滑方法有Good-Turing smoothing</strong>
       </p>
       <p>(3) 按照上述概率对文档进行排序。</p>
     `
@@ -105,6 +107,7 @@ export const languageKnowledge = [
     content: `
       <p style="text-indent: 2em;">
         相关度排序函数定义虽然比较直观，但相关性是一个<strong>抽象</strong>的概念，该定义本身没有也无法具体给出R的定义，所以该模型在理论上存在很大的<strong>模糊性。</strong>
+        <strong>语言模型的缺点是完全匹配可能导致检出的文档过多或过少，难以控制检索结果的输出量</strong>
       </p>
     `
   }

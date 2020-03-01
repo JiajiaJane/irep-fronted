@@ -15,6 +15,7 @@ export const probabilityKnowledge = [
     content: `
       <p style="text-indent: 2em;">
         给定一个用户查询，若搜索系统能在搜索结果排序时按照文档和用户查询的相关性由高到低排序，那么这个搜索系统的准确性是最优的。
+        <strong>将相关性衡量转换为分类问题，对某个文档D来说，若其属于相关文档子集的概率大于不相关文档的概率，就认为它与查询相关。</strong>
       </p>
     `
   },
