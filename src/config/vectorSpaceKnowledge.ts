@@ -19,7 +19,7 @@ export const vectorSpaceKnowledge = [
           </msub>
         </math>
         ：出现词项的t文档数目，也就是每个倒排记录表的长度。</p>
-      <p><strong>term</strong><strong>&nbsp;</strong><strong>frequency）</strong>
+      <p><strong>词项频率（term</strong><strong>&nbsp;</strong><strong>frequency）</strong>
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <mi> t </mi>
           <msub>
@@ -117,7 +117,7 @@ export const vectorSpaceKnowledge = [
             </mrow>
           </msub>
         </math>
-      ：利用倒排索引表中的文档频率
+      ：利用倒排索引表中的<strong>文档频率</strong>
       <math xmlns="http://www.w3.org/1998/Math/MathML">
         <mi> d </mi>
         <msub>
@@ -250,7 +250,7 @@ export const vectorSpaceKnowledge = [
         </math>
       </p>
       <p>
-        3.计算向量：按照词典中的顺序建立各个文档的词项向量，向量中每一个词的权值一般采用TF-IDF框架计算。（查询语句也看作一个文档进行计算）
+        3.计算向量：按照词典中的顺序建立各个文档的词项向量，向量中每一个词的权值一般采用<strong>TF-IDF</strong>框架计算。（查询语句也看作一个文档进行计算）
       </p>
       <p>TF*IDF框架：
         <math xmlns="http://www.w3.org/1998/Math/MathML">
