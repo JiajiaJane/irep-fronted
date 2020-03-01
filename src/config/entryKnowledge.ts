@@ -30,7 +30,7 @@ export const entryKnowledge = [
                 <strong>1、索引和搜索原理</strong>
               </p>
               <p style="text-align: center;">
-                <img src="https://t1.picb.cc/uploads/2019/07/26/grGtkc.png" style="max-width: 100%;">
+                <img src='https://img.it610.com/image/info5/419f7a7726874557adcc04b9b19aff1e.jpg' style="max-width: 100%;">
               </p>
               <p style="text-align: center;">
                 <strong>图表 1&nbsp;</strong>Principle of Index
@@ -60,7 +60,7 @@ export const entryKnowledge = [
                 这里我们可以将磁盘上的一个文件当成一个document，Document中包括一些Field（file_name文件名称、file_path文件路径、file_size文件大小、file_content文件内容），如下图：
               </p>
               <p style="text-align: center;">
-                <img src="https://t1.picb.cc/uploads/2019/07/26/grGZHK.png" style="max-width: 100%;">
+                <img src="https://img.it610.com/image/info5/877df1bf82ed4a7da5178da92ae1b30e.png" style="max-width: 100%;">
               </p>
               <p style="text-align: center;">
                 <strong>图表 2&nbsp;</strong>Document
