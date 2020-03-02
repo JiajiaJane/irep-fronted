@@ -3,7 +3,7 @@ import { Dispatch } from 'redux'
 import { withRouter, RouteComponentProps } from 'react-router'
 import { Button, Icon, notification } from 'antd'
 import styles from './Experiment.module.less'
-import { setStore, getStore } from '../../utils/util'
+import { setStore, getStore, setLocalStore } from '../../utils/util'
 import { requestFn } from '../../utils/request'
 import { Actions } from '../../store/Actions'
 import { useDispatch } from '../../store/Store'
@@ -22,10 +22,12 @@ const ExperimentComponent = (props: RouteComponentProps) => {
     })
   }
 
+  // 考试模式
   const handleClick = async () => {
     // 存开始时间
     setStore('startDate', new Date().getTime())
     props.history.replace('/experiment/entry')
+    setLocalStore("modal",'1')
     // setNextLoading(true)
     // const res = await requestFn(dispatch, {
     //   url: '/platform/sendData',
@@ -47,6 +49,15 @@ const ExperimentComponent = (props: RouteComponentProps) => {
     // setNextLoading(false)
   }
 
+  // 学习模式
+  const handleClick0 = async () => {
+    // 存开始时间
+    setStore('startDate', new Date().getTime())
+    props.history.replace('/experiment/entry')
+    // 学习模式存0，考试模式存1
+    setLocalStore("modal",'0')
+  }
+
   const dispatch: Dispatch<Actions> = useDispatch()
 
   return (
@@ -59,7 +70,7 @@ const ExperimentComponent = (props: RouteComponentProps) => {
 
         <div className={styles.div}>
           <div className={styles.div1}>
-            <Button className={styles.button} type="default" onClick={handleClick} loading={nextLoading}>
+            <Button className={styles.button} type="default" onClick={handleClick0} loading={nextLoading}>
               <span> 学习模式 </span>
               <Icon className={styles.icon} type="read" />
             </Button>

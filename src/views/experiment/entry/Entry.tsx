@@ -13,7 +13,7 @@ import { Actions } from '../../../store/Actions'
 import Knowledge from '../../../components/knowledge/Knowledge'
 import { entryKnowledge } from '../../../config/entryKnowledge'
 import { getUrlParam } from '../../../utils/util'
-import { getStore } from '../../../utils/util'
+import { getStore,getLocalStore } from '../../../utils/util'
 
 const { TabPane } = Tabs
 
@@ -21,7 +21,8 @@ const defaultTab = getUrlParam('tab')
 
 const EntryComponent = (props: RouteComponentProps) => {
   const [loading, setLoading] = useState(false)
-  const [activeTabKey, setActiveTabKey] = useState(defaultTab || '1')
+  const [tabDisabled0, setTabDisabled0] = useState(getLocalStore("modal")=='0')
+  const [activeTabKey, setActiveTabKey] = useState(defaultTab || tabDisabled0?'1':'2')
   const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
   const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
   const dispatch: Dispatch<Actions> = useDispatch()
@@ -149,8 +150,8 @@ const EntryComponent = (props: RouteComponentProps) => {
     <div className={styles.Container}>
       <StepsExam />
       <div className={styles.Content}>
-        <Tabs defaultActiveKey="1" activeKey={activeTabKey} onTabClick={tabClick} tabBarExtraContent={operations}>
-          <TabPane tab="温故知新" key="1" disabled={!tabDisabled}>
+        <Tabs defaultActiveKey={!tabDisabled0?'2':"1"} activeKey={activeTabKey} onTabClick={tabClick} tabBarExtraContent={operations}>
+          <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
             <Knowledge knowledge={entryKnowledge} />
           </TabPane>
           <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>
