@@ -9,7 +9,7 @@ import { pretreatmentCompletionQuestions, pretreatmentChoiceQuestions } from '..
 import { pretreatmentKnowledge } from '../../../config/pretreatmentKnowledge'
 import PretreatmentExperiment from './PretreatmentExperiment'
 import { getUrlParam } from '../../../utils/util'
-import { getStore } from '../../../utils/util'
+import { getStore, getLocalStore } from '../../../utils/util'
 
 const { TabPane } = Tabs
 
@@ -19,7 +19,8 @@ const defaultTab = getUrlParam('tab')
  * 预处理实验
  */
 const PretreatmentComponet = (props: RouteComponentProps) => {
-  const [activeTabKey, setActiveTabKey] = useState(defaultTab || '1')
+  const [tabDisabled0, setTabDisabled0] = useState(getLocalStore('modal') == '0') //学习状态为0
+  const [activeTabKey, setActiveTabKey] = useState(defaultTab || tabDisabled0 ? '1' : '2')
   const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
   const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
 
@@ -73,7 +74,7 @@ const PretreatmentComponet = (props: RouteComponentProps) => {
   // }
 
   const operations = (
-    <Button className={styles.controlButton}  onClick={lastStep}>
+    <Button className={styles.controlButton} onClick={lastStep}>
       上一步
     </Button>
   )
@@ -82,8 +83,12 @@ const PretreatmentComponet = (props: RouteComponentProps) => {
     <div className={styles.Container}>
       <Steps current="构建预处理器" finishedItems={1} />
       <div className={styles.Content}>
-        <Tabs defaultActiveKey="1" activeKey={activeTabKey} onTabClick={tabClick} tabBarExtraContent={operations}>
-          <TabPane tab="温故知新" key="1" disabled={!tabDisabled}>
+        <Tabs
+          defaultActiveKey={!tabDisabled0 ? '2' : '1'}
+          activeKey={activeTabKey}
+          onTabClick={tabClick}
+          tabBarExtraContent={operations}>
+          <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
             <Knowledge knowledge={pretreatmentKnowledge} />
           </TabPane>
           <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>

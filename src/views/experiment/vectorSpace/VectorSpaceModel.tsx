@@ -9,6 +9,7 @@ import { vectorSpaceCompletionQuestions, vectorSpaceChoiceQuestions } from '../.
 import { vectorSpaceKnowledge } from '../../../config/vectorSpaceKnowledge'
 import VectorSpaceExperiment from './VectorSpaceExperiment'
 import { getUrlParam, getStore } from '../../../utils/util'
+import { getLocalStore } from '../../../utils/util'
 
 const { TabPane } = Tabs
 
@@ -16,8 +17,9 @@ const defaultTab = getUrlParam('tab')
 
 /** 向量空间模型实验 */
 const VectorSpaceModalComponet = (props: RouteComponentProps) => {
-  const [activeTabKey, setActiveTabKey] = useState(defaultTab || '1')
   const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
+  const [tabDisabled0, setTabDisabled0] = useState(getLocalStore('modal') == '0')
+  const [activeTabKey, setActiveTabKey] = useState(defaultTab || tabDisabled0 ? '1' : '2')
 
   /** 是否显示操作按钮
    *
@@ -83,8 +85,12 @@ const VectorSpaceModalComponet = (props: RouteComponentProps) => {
     <div className={styles.Container}>
       <Steps current="构建向量空间模型" finishedItems={5} />
       <div className={styles.Content}>
-        <Tabs defaultActiveKey="1" activeKey={activeTabKey} onTabClick={tabClick} tabBarExtraContent={renderOperations}>
-          <TabPane tab="温故知新" key="1" disabled={!tabDisabled}>
+        <Tabs
+          defaultActiveKey={!tabDisabled0 ? '2' : '1'}
+          activeKey={activeTabKey}
+          onTabClick={tabClick}
+          tabBarExtraContent={renderOperations}>
+          <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
             <Knowledge knowledge={vectorSpaceKnowledge} />
           </TabPane>
           <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>

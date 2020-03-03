@@ -9,6 +9,7 @@ import { booleanCompletionQuestions, booleanChoiceQuestions } from '../../../con
 import BooleanExperiment from './BooleanExperiment'
 import { booleanKnowledge } from '../../../config/booleanKnowledge'
 import { getUrlParam, getStore } from '../../../utils/util'
+import { getLocalStore } from '../../../utils/util'
 
 const { TabPane } = Tabs
 
@@ -18,7 +19,8 @@ const defaultTab = getUrlParam('tab')
  * 布尔模型实验
  */
 const BooleanModalComponet = (props: RouteComponentProps) => {
-  const [activeTabKey, setActiveTabKey] = useState(defaultTab || '1')
+  const [tabDisabled0, setTabDisabled0] = useState(getLocalStore('modal') == '0')
+  const [activeTabKey, setActiveTabKey] = useState(defaultTab || tabDisabled0 ? '1' : '2')
   const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
   const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
 
@@ -73,7 +75,7 @@ const BooleanModalComponet = (props: RouteComponentProps) => {
 
   const operations = (
     <div>
-      <Button className={styles.controlButton}  onClick={lastStep}>
+      <Button className={styles.controlButton} onClick={lastStep}>
         上一步
       </Button>
       <Button className={styles.controlButton} hidden={buttonDisabled} onClick={nextStep}>
@@ -86,8 +88,12 @@ const BooleanModalComponet = (props: RouteComponentProps) => {
     <div className={styles.Container}>
       <Steps current="构建布尔模型" finishedItems={4} />
       <div className={styles.Content}>
-        <Tabs defaultActiveKey="1" activeKey={activeTabKey} onTabClick={tabClick} tabBarExtraContent={operations}>
-          <TabPane tab="温故知新" key="1" disabled={!tabDisabled}>
+        <Tabs
+          defaultActiveKey={!tabDisabled0 ? '2' : '1'}
+          activeKey={activeTabKey}
+          onTabClick={tabClick}
+          tabBarExtraContent={operations}>
+          <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
             <Knowledge knowledge={booleanKnowledge} />
           </TabPane>
           <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>

@@ -9,6 +9,7 @@ import { languageCompletionQuestions, languageChoiceQuestions } from '../../../c
 import { languageKnowledge } from '../../../config/languageKnowledge'
 import LanguageExperiment from './LanguageExperiment'
 import { getUrlParam, getStore } from '../../../utils/util'
+import { getLocalStore } from '../../../utils/util'
 
 const { TabPane } = Tabs
 
@@ -18,7 +19,8 @@ const defaultTab = getUrlParam('tab')
  * 语言模型实验
  */
 const LanguageModalComponet = (props: RouteComponentProps) => {
-  const [activeTabKey, setActiveTabKey] = useState(defaultTab || '1')
+  const [tabDisabled0, setTabDisabled0] = useState(getLocalStore('modal') == '0')
+  const [activeTabKey, setActiveTabKey] = useState(defaultTab || tabDisabled0 ? '1' : '2')
   const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
   const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
 
@@ -86,8 +88,12 @@ const LanguageModalComponet = (props: RouteComponentProps) => {
     <div className={styles.Container}>
       <Steps current="构建语言模型" finishedItems={7} />
       <div className={styles.Content}>
-        <Tabs defaultActiveKey="1" activeKey={activeTabKey} onTabClick={tabClick} tabBarExtraContent={operations}>
-          <TabPane tab="温故知新" key="1" disabled={!tabDisabled}>
+        <Tabs
+          defaultActiveKey={!tabDisabled0 ? '2' : '1'}
+          activeKey={activeTabKey}
+          onTabClick={tabClick}
+          tabBarExtraContent={operations}>
+          <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
             <Knowledge knowledge={languageKnowledge} />
           </TabPane>
           <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>

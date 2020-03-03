@@ -13,7 +13,7 @@ import { Actions } from '../../../store/Actions'
 import { invertedIndexKnowledge } from '../../../config/invertedIndexKnowledge'
 import InvertedIndexExperiment from './InvertedIndexExperiment'
 import { getUrlParam } from '../../../utils/util'
-import { getStore } from '../../../utils/util'
+import { getStore, getLocalStore } from '../../../utils/util'
 
 const { TabPane } = Tabs
 
@@ -23,7 +23,8 @@ const defaultTab = getUrlParam('tab')
  * 倒排索引
  */
 const InvertedIndexComponent = (props: RouteComponentProps) => {
-  const [activeTabKey, setActiveTabKey] = useState(defaultTab || '1')
+  const [tabDisabled0, setTabDisabled0] = useState(getLocalStore('modal') == '0')
+  const [activeTabKey, setActiveTabKey] = useState(defaultTab || tabDisabled0 ? '1' : '2')
   const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
   const dispatch: Dispatch<Actions> = useDispatch()
   const state: State = useMappedState(useCallback((globalState: State) => globalState, []))
@@ -129,18 +130,18 @@ const InvertedIndexComponent = (props: RouteComponentProps) => {
     props.history.replace('/experiment/boolean')
   }
 
-  const operations = (
-    <Button onClick={lastStep}>
-      上一步
-    </Button>
-  )
+  const operations = <Button onClick={lastStep}>上一步</Button>
 
   return (
     <div className={styles.Container}>
       <Steps current="构建倒排索引表" finishedItems={2} />
       <div className={styles.Content}>
-        <Tabs defaultActiveKey="1" activeKey={activeTabKey} onTabClick={tabClick} tabBarExtraContent={operations}>
-          <TabPane tab="温故知新" key="1" disabled={!tabDisabled}>
+        <Tabs
+          defaultActiveKey={!tabDisabled0 ? '2' : '1'}
+          activeKey={activeTabKey}
+          onTabClick={tabClick}
+          tabBarExtraContent={operations}>
+          <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
             <Knowledge knowledge={invertedIndexKnowledge} />
           </TabPane>
           <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>
