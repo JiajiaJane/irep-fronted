@@ -95,6 +95,19 @@ const EntryComponent = (props: RouteComponentProps) => {
    */
   const saveExperiment = async () => {
     setLoading(true)
+    if(tabDisabled0){
+      let same_num=0
+      let stepIndex=getStepIndex(state.steps, state.entryExperimentCards)
+      for(let i=1;i<11;i++){
+        if(stepIndex[i-1]==i){
+          same_num=same_num+1
+        }
+        else if(i>4 && i<9 && stepIndex[i-1]>4 && stepIndex[i-1]<9){
+          same_num=same_num+1
+        }
+      }
+      alert("您回答对了"+same_num+"个，正确答案将在下一步显示")
+    }
     const res = await requestFn(dispatch, {
       url: '/score/updateRankingScore',
       method: 'post',
