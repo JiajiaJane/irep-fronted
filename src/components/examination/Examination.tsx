@@ -106,7 +106,8 @@ const ExamForm = (props: ExamFormProps) => {
   /**答案提示 */
   const answerTips=(message='')=>{
     notification.success({
-      message
+      message,
+      duration:2
     })
   }
 
