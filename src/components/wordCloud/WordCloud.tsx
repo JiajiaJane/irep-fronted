@@ -154,7 +154,7 @@ const WordCloudComponent = (props: WordCloudProps) => {
             padding: 1,
             rotations: 3,
             rotationAngles: [0, 90],
-            scale: 'sqrt',
+            // scale: 'sqrt',
             spiral: 'archimedean',
             transitionDuration: 1000
           }}

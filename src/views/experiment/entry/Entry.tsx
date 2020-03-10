@@ -173,6 +173,7 @@ const EntryComponent = (props: RouteComponentProps) => {
               choiceQuestions={entryChoiceQuestions}
               experimentId={1}
               goNextStep={goNextStep}
+              iStudy={tabDisabled0}
             />
           </TabPane>
           <TabPane tab="构建模型页" key="3" disabled={able()}>

@@ -24,6 +24,7 @@ interface ExamFormProps extends FormComponentProps {
   choiceQuestions: ChoiceQuestion[]
   readonly experimentId?: number
   goNextStep?: () => void
+  readonly iStudy?:boolean
 }
 
 /** 知识自查表单组件 */
@@ -102,6 +103,13 @@ const ExamForm = (props: ExamFormProps) => {
     })
   }
 
+  /**答案提示 */
+  const answerTips=(message='')=>{
+    notification.success({
+      message
+    })
+  }
+
   /** 错误提示 */
   const errorTips = (message = '', description = '') => {
     notification.error({
@@ -129,6 +137,10 @@ const ExamForm = (props: ExamFormProps) => {
     setValidError(false)
   }
 
+  const showAnswer=(prop: string | undefined)=>{
+    answerTips("正确答案是:"+prop+"，你答对了吗？")
+  }
+
   /** 渲染完成题组件 */
   const renderCompletionQuestion = () => {
     return completionQuestions.map((i, index) => {
@@ -140,7 +152,9 @@ const ExamForm = (props: ExamFormProps) => {
               rules: [{ required: true, message: '请输入答案' }]
             })(<Input placeholder="" onChange={clearErrorTips} autoComplete="off" />)}
           </Form.Item>
-          <span className={styles.QuestionText}>{`${i.suffix}`}</span>
+          <span className={styles.QuestionText}>{`${i.suffix}`}
+          <Button onClick={()=>showAnswer(i.answer)}>查看答案</Button>
+          </span>
         </div>
       )
     })
