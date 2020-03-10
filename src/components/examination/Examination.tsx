@@ -177,7 +177,7 @@ const ExamForm = (props: ExamFormProps) => {
     return props.choiceQuestions.map((i: ChoiceQuestion, index) => {
       return (
         <div key={index} className={styles.ChoiceQuestionItem}>
-          <p className={styles.ChoiceQuestionTitle}>{`${index + 1}.${i.title}`}</p>
+          <p className={styles.ChoiceQuestionTitle}>{`${index + 1}.${i.title}`} <Button onClick={()=>showAnswer(i.answer)} hidden={!props.iStudy}>查看答案</Button></p>
           <Form.Item className={`GlobalExamItem ${styles.ChoiceQuestionFormItem}`}>
             {getFieldDecorator(`choice${index + 1}`, {
               rules: [{ required: true, message: '请至少勾选一项' }]
