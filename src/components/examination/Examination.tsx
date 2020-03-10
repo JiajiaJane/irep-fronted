@@ -154,7 +154,7 @@ const ExamForm = (props: ExamFormProps) => {
             })(<Input placeholder="" onChange={clearErrorTips} autoComplete="off" />)}
           </Form.Item>
           <span className={styles.QuestionText}>{`${i.suffix}`}
-          <Button onClick={()=>showAnswer(i.answer)}>查看答案</Button>
+          <Button onClick={()=>showAnswer(i.answer)} hidden={!props.iStudy}>查看答案</Button>
           </span>
         </div>
       )
