@@ -23,7 +23,7 @@ const EntryComponent = (props: RouteComponentProps) => {
   const [loading, setLoading] = useState(false)
   const [tabDisabled0, setTabDisabled0] = useState(getLocalStore("modal")=='0')
   const [activeTabKey, setActiveTabKey] = useState(defaultTab || tabDisabled0?'1':'2')
-  const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
+  // const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
   const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
   const dispatch: Dispatch<Actions> = useDispatch()
   const state: State = useMappedState(useCallback((globalState: State) => globalState, []))
@@ -87,7 +87,7 @@ const EntryComponent = (props: RouteComponentProps) => {
   const goNextStep = () => {
     setActiveTabKey('3')
     updateHistory('/experiment/entry?tab=3')
-    setTabDisabled(false)
+    // setTabDisabled(false)
   }
 
   /**
@@ -151,13 +151,14 @@ const EntryComponent = (props: RouteComponentProps) => {
     </Button>
   )
 
-  const able = () => {
-    if (getStore('zhuanjia')) {
-      return false
-    } else {
-      return tabDisabled
-    }
-  }
+  //判断是否是专家模式，专家模式可以直接进入模型构建
+  // const able = () => {
+  //   if (getStore('zhuanjia')) {
+  //     return false
+  //   } else {
+  //     return tabDisabled
+  //   }
+  // }
 
   return (
     <div className={styles.Container}>
@@ -167,7 +168,7 @@ const EntryComponent = (props: RouteComponentProps) => {
           <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
             <Knowledge knowledge={entryKnowledge} />
           </TabPane>
-          <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>
+          <TabPane tab="知识自查" key="2">
             <Examination
               completionQuestions={entryCompletionQuestions}
               choiceQuestions={entryChoiceQuestions}
@@ -176,7 +177,7 @@ const EntryComponent = (props: RouteComponentProps) => {
               iStudy={tabDisabled0}
             />
           </TabPane>
-          <TabPane tab="构建模型页" key="3" disabled={able()}>
+          <TabPane tab="构建模型页" key="3" >
             <EntryExperiment save={saveExperiment} loading={loading} />
           </TabPane>
         </Tabs>

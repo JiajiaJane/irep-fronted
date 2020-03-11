@@ -55,23 +55,18 @@ const PretreatmentComponet = (props: RouteComponentProps) => {
   }
 
   // 专家进入的可切换前后步骤
-  const able = () => {
-    if (getStore('zhuanjia')) {
-      return false
-    } else {
-      return tabDisabled
-    }
-  }
+  // const able = () => {
+  //   if (getStore('zhuanjia')) {
+  //     return false
+  //   } else {
+  //     return tabDisabled
+  //   }
+  // }
 
   // 上一步
   const lastStep = () => {
     props.history.replace('/experiment/entry')
   }
-
-  // 下一步
-  // const nextStep = () => {
-  //   props.history.replace('/experiment/invertedIndex')
-  // }
 
   const operations = (
     <Button className={styles.controlButton} onClick={lastStep}>
@@ -91,7 +86,7 @@ const PretreatmentComponet = (props: RouteComponentProps) => {
           <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
             <Knowledge knowledge={pretreatmentKnowledge} />
           </TabPane>
-          <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>
+          <TabPane tab="知识自查" key="2">
             <Examination
               completionQuestions={pretreatmentCompletionQuestions}
               choiceQuestions={pretreatmentChoiceQuestions}
@@ -99,7 +94,7 @@ const PretreatmentComponet = (props: RouteComponentProps) => {
               goNextStep={goNextStep}
             />
           </TabPane>
-          <TabPane tab="构建模型页" key="3" disabled={able()}>
+          <TabPane tab="构建模型页" key="3">
             <PretreatmentExperiment />
           </TabPane>
         </Tabs>

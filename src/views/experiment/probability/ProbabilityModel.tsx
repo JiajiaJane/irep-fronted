@@ -22,7 +22,7 @@ const ProbabilityModalComponet = (props: RouteComponentProps) => {
   const [tabDisabled0, setTabDisabled0] = useState(getLocalStore('modal') == '0')
   const [activeTabKey, setActiveTabKey] = useState(defaultTab || tabDisabled0 ? '1' : '2')
   const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
-  const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
+  // const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
 
   /**
    * 知识自查，完成后前往构建模型tab页
@@ -74,7 +74,7 @@ const ProbabilityModalComponet = (props: RouteComponentProps) => {
       <Button className={styles.controlButton} onClick={lastStep}>
         上一步
       </Button>
-      <Button className={styles.controlButton} hidden={buttonDisabled} onClick={nextStep}>
+      <Button className={styles.controlButton}  onClick={nextStep}>
         下一步
       </Button>
     </div>
@@ -92,7 +92,7 @@ const ProbabilityModalComponet = (props: RouteComponentProps) => {
           <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
             <Knowledge knowledge={probabilityKnowledge} />
           </TabPane>
-          <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>
+          <TabPane tab="知识自查" key="2">
             <Examination
               completionQuestions={probabilityCompletionQuestions}
               choiceQuestions={probabilityChoiceQuestions}
@@ -100,18 +100,10 @@ const ProbabilityModalComponet = (props: RouteComponentProps) => {
               goNextStep={goNextStep}
             />
           </TabPane>
-          <TabPane tab="构建模型页" key="3" disabled={able()}>
+          <TabPane tab="构建模型页" key="3">
             <ProbabilityExperiment />
           </TabPane>
         </Tabs>
-        {/* <div className={styles.stepButton}>
-          <Button hidden={buttonDisabled} onClick={lastStep}>
-            上一步
-          </Button>
-          <Button hidden={buttonDisabled} onClick={nextStep}>
-            下一步
-          </Button>
-        </div> */}
       </div>
     </div>
   )

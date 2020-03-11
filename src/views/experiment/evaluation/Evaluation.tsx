@@ -22,7 +22,7 @@ const EvaluationComponet = (props: RouteComponentProps) => {
   const [tabDisabled0, setTabDisabled0] = useState(getLocalStore('modal') == '0')
   const [activeTabKey, setActiveTabKey] = useState(defaultTab || tabDisabled0 ? '1' : '2')
   const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
-  const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
+  // const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
 
   const handleClick = () => {
     props.history.replace('/experiment/simulation')
@@ -78,7 +78,7 @@ const EvaluationComponet = (props: RouteComponentProps) => {
       <Button className={styles.controlButton} onClick={lastStep}>
         上一步
       </Button>
-      <Button className={styles.controlButton} hidden={buttonDisabled} onClick={nextStep}>
+      <Button className={styles.controlButton}  onClick={nextStep}>
         下一步
       </Button>
     </div>
@@ -93,7 +93,7 @@ const EvaluationComponet = (props: RouteComponentProps) => {
           activeKey={activeTabKey}
           onTabClick={tabClick}
           tabBarExtraContent={operations}>
-          <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
+          <TabPane tab="温故知新" key="1" >
             <Knowledge knowledge={evaluationKnowledge} />
           </TabPane>
           <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>
@@ -104,7 +104,7 @@ const EvaluationComponet = (props: RouteComponentProps) => {
               goNextStep={goNextStep}
             />
           </TabPane>
-          <TabPane tab="构建模型页" key="3" disabled={able()}>
+          <TabPane tab="构建模型页" key="3">
             <EvluationExperiment />
           </TabPane>
         </Tabs>
