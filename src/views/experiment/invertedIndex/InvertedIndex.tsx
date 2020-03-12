@@ -125,11 +125,6 @@ const InvertedIndexComponent = (props: RouteComponentProps) => {
     props.history.replace('/experiment/pretreatment')
   }
 
-  // 下一步
-  const nextStep = () => {
-    props.history.replace('/experiment/boolean')
-  }
-
   const operations = <Button onClick={lastStep}>上一步</Button>
 
   return (
@@ -144,7 +139,7 @@ const InvertedIndexComponent = (props: RouteComponentProps) => {
           <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
             <Knowledge knowledge={invertedIndexKnowledge} />
           </TabPane>
-          <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>
+          <TabPane tab="知识自查" key="2">
             <Examination
               completionQuestions={invertedIndexCompletionQuestions}
               choiceQuestions={invertedIndexChoiceQuestions}
@@ -153,7 +148,7 @@ const InvertedIndexComponent = (props: RouteComponentProps) => {
               iStudy={tabDisabled0}
             />
           </TabPane>
-          <TabPane tab="构建模型页" key="3" disabled={able()}>
+          <TabPane tab="构建模型页" key="3" >
             <InvertedIndexExperiment />
           </TabPane>
         </Tabs>

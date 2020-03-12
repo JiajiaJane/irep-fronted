@@ -75,7 +75,7 @@ const VectorSpaceModalComponet = (props: RouteComponentProps) => {
       <Button className={styles.controlButton} onClick={lastStep}>
         上一步
       </Button>
-      <Button className={styles.controlButton} hidden={showButton()} onClick={nextStep}>
+      <Button className={styles.controlButton} onClick={nextStep}>
         下一步
       </Button>
     </div>
@@ -93,7 +93,7 @@ const VectorSpaceModalComponet = (props: RouteComponentProps) => {
           <TabPane tab="温故知新" key="1" disabled={!tabDisabled0}>
             <Knowledge knowledge={vectorSpaceKnowledge} />
           </TabPane>
-          <TabPane tab="知识自查" key="2" disabled={!tabDisabled}>
+          <TabPane tab="知识自查" key="2">
             <Examination
               completionQuestions={vectorSpaceCompletionQuestions}
               choiceQuestions={vectorSpaceChoiceQuestions}
@@ -102,7 +102,7 @@ const VectorSpaceModalComponet = (props: RouteComponentProps) => {
               iStudy={tabDisabled0}
             />
           </TabPane>
-          <TabPane tab="构建模型页" key="3" disabled={able()}>
+          <TabPane tab="构建模型页" key="3">
             <VectorSpaceExperiment />
           </TabPane>
         </Tabs>

@@ -87,11 +87,11 @@ const SimulationComponent = (props: RouteComponentProps) => {
   }
 
   /** 是否显示按钮，仅针对专家 */
-  const showButton = () => {
-    return !getStore('zhuanjia')
-  }
+  // const showButton = () => {
+  //   return !getStore('zhuanjia')
+  // }
 
-  // 专家系统 返回上一步
+  // 返回上一步
   const lastStep = () => {
     props.history.replace('/experiment/evaluation')
   }
