@@ -102,6 +102,7 @@ const EvaluationComponet = (props: RouteComponentProps) => {
               choiceQuestions={evaluationChoiceQuestions}
               experimentId={8}
               goNextStep={goNextStep}
+              iStudy={tabDisabled0}
             />
           </TabPane>
           <TabPane tab="构建模型页" key="3" disabled={able()}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Dispatch } from 'redux'
-import { Form, Input, Checkbox, Button, notification } from 'antd'
+import { Form, Input, Checkbox, Button, Icon, notification } from 'antd'
 import { FormComponentProps } from 'antd/lib/form/Form'
 import styles from './Examination.module.less'
 import titleLeftImg from '../../assets/experiment/exam/completion_title_left.png'
@@ -24,7 +24,7 @@ interface ExamFormProps extends FormComponentProps {
   choiceQuestions: ChoiceQuestion[]
   readonly experimentId?: number
   goNextStep?: () => void
-  readonly iStudy?:boolean
+  readonly iStudy?: boolean
 }
 
 /** 知识自查表单组件 */
@@ -104,10 +104,10 @@ const ExamForm = (props: ExamFormProps) => {
   }
 
   /**答案提示 */
-  const answerTips=(message='')=>{
+  const answerTips = (message = '') => {
     notification.success({
       message,
-      duration:2
+      duration: 2
     })
   }
 
@@ -138,8 +138,8 @@ const ExamForm = (props: ExamFormProps) => {
     setValidError(false)
   }
 
-  const showAnswer=(prop: string | undefined)=>{
-    answerTips("正确答案是:"+prop+"，你答对了吗？")
+  const showAnswer = (prop: string | undefined) => {
+    answerTips('正确答案是:' + prop + '，你答对了吗？')
   }
 
   /** 渲染完成题组件 */
@@ -153,8 +153,15 @@ const ExamForm = (props: ExamFormProps) => {
               rules: [{ required: true, message: '请输入答案' }]
             })(<Input placeholder="" onChange={clearErrorTips} autoComplete="off" />)}
           </Form.Item>
-          <span className={styles.QuestionText}>{`${i.suffix}`}
-          <Button onClick={()=>showAnswer(i.answer)} hidden={!props.iStudy}>查看答案</Button>
+          <span className={styles.QuestionText}>
+            {`${i.suffix}`}
+            <Button
+              className={styles.button}
+              type="primary"
+              onClick={() => showAnswer(i.answer)}
+              hidden={!props.iStudy}>
+              答案 <Icon className={styles.icon} type="search" />{' '}
+            </Button>
           </span>
         </div>
       )
@@ -177,7 +184,16 @@ const ExamForm = (props: ExamFormProps) => {
     return props.choiceQuestions.map((i: ChoiceQuestion, index) => {
       return (
         <div key={index} className={styles.ChoiceQuestionItem}>
-          <p className={styles.ChoiceQuestionTitle}>{`${index + 1}.${i.title}`} <Button onClick={()=>showAnswer(i.answer)} hidden={!props.iStudy}>查看答案</Button></p>
+          <p className={styles.ChoiceQuestionTitle}>
+            {`${index + 1}.${i.title}`}{' '}
+            <Button
+              className={styles.button}
+              type="primary"
+              onClick={() => showAnswer(i.answer)}
+              hidden={!props.iStudy}>
+              答案 <Icon className={styles.icon} type="search" />{' '}
+            </Button>
+          </p>
           <Form.Item className={`GlobalExamItem ${styles.ChoiceQuestionFormItem}`}>
             {getFieldDecorator(`choice${index + 1}`, {
               rules: [{ required: true, message: '请至少勾选一项' }]

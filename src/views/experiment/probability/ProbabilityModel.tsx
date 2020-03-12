@@ -98,6 +98,7 @@ const ProbabilityModalComponet = (props: RouteComponentProps) => {
               choiceQuestions={probabilityChoiceQuestions}
               experimentId={6}
               goNextStep={goNextStep}
+              iStudy={tabDisabled0}
             />
           </TabPane>
           <TabPane tab="构建模型页" key="3" disabled={able()}>
