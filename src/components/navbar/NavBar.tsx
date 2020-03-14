@@ -4,7 +4,7 @@ import { Dispatch } from 'redux'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import styles from './NavBar.module.less'
 import userAvatar from '../../assets/navbar/user.png'
-import { removeAllStore, getStore } from '../../utils/util'
+import { removeAllStore, getStore, getLocalStore } from '../../utils/util'
 import { requestFn } from '../../utils/request'
 import { useDispatch } from '../../store/Store'
 import { Actions } from '../../store/Actions'
@@ -63,9 +63,10 @@ const NavBarComponet = (props: RouteComponentProps) => {
   /** 点击导航栏菜单项 */
   const goRoute = (path: string) => {
     const currentPath = window.location.pathname
-    if (currentPath.includes('experiment') && path === '/experiment') {
+    if (getLocalStore('modal') == '1' && currentPath.includes('experiment') && path === '/experiment') {
       return false
     } else if (
+      getLocalStore('modal') == '1' &&
       currentPath !== '/experiment/index' &&
       currentPath.includes('experiment') &&
       !getStore('finishedAllExperiments')
