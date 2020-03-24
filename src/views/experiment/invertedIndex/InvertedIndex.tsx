@@ -125,7 +125,30 @@ const InvertedIndexComponent = (props: RouteComponentProps) => {
     props.history.replace('/experiment/pretreatment')
   }
 
-  const operations = <Button onClick={lastStep}>上一步</Button>
+
+ /**提示 */
+ const answerTips = (message = '') => {
+  notification.success({
+    message,
+    duration: 2
+  })
+}
+
+const nextStep= () => {
+  answerTips('构建检索模型之前，应先完成倒排索引表的构建，否则后续实验会出错' )
+    props.history.replace('/experiment/boolean')
+  }
+
+  const operations = (
+    <div>
+      <Button className={styles.controlButton} onClick={lastStep}>
+        上一步
+      </Button>
+      <Button className={styles.controlButton} onClick={nextStep} hidden={!tabDisabled0}>
+        下一步
+      </Button>
+    </div>
+  )
 
   return (
     <div className={styles.Container}>

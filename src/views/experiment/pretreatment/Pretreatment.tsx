@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { withRouter, RouteComponentProps } from 'react-router'
-import { Tabs, Button } from 'antd'
+import { Tabs, Button, notification } from 'antd'
 import styles from './Pretreatment.module.less'
 import Steps from '../../../components/steps/Steps'
 import Knowledge from '../../../components/knowledge/Knowledge'
@@ -24,9 +24,7 @@ const PretreatmentComponet = (props: RouteComponentProps) => {
   const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
   const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
 
-  // const handleClick = () => {
-  //   props.history.replace('/experiment/invertedIndex')
-  // }
+  
 
   /**
    * 知识自查，完成后前往构建模型tab页
@@ -68,10 +66,28 @@ const PretreatmentComponet = (props: RouteComponentProps) => {
     props.history.replace('/experiment/entry')
   }
 
+   /**提示 */
+   const answerTips = (message = '') => {
+    notification.success({
+      message,
+      duration: 2
+    })
+  }
+
+  const nextStep= () => {
+    answerTips('构建倒排索引表之前，应先进行数据预处理，否咋后续实验会出错' )
+    props.history.replace('/experiment/invertedIndex')
+  }
+
   const operations = (
-    <Button className={styles.controlButton} onClick={lastStep}>
-      上一步
-    </Button>
+    <div>
+      <Button className={styles.controlButton} onClick={lastStep}>
+        上一步
+      </Button>
+      <Button className={styles.controlButton} onClick={nextStep} hidden={!tabDisabled0}>
+        下一步
+      </Button>
+    </div>
   )
 
   return (

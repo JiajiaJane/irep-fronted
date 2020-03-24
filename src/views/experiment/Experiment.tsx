@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { Dispatch } from 'redux'
 import { withRouter, RouteComponentProps } from 'react-router'
-import { Button, Icon, notification } from 'antd'
+import { Button, Icon, notification, Modal } from 'antd'
 import styles from './Experiment.module.less'
 import { setStore, getStore, setLocalStore } from '../../utils/util'
 import { requestFn } from '../../utils/request'
 import { Actions } from '../../store/Actions'
 import { useDispatch } from '../../store/Store'
+import Title from 'antd/lib/skeleton/Title'
 
 /** 实验入口页 */
 const ExperimentComponent = (props: RouteComponentProps) => {
@@ -24,6 +25,7 @@ const ExperimentComponent = (props: RouteComponentProps) => {
 
   // 考试模式
   const handleClick = async () => {
+    alert("进入考核模式后，中途不可退出")
     // 存开始时间
     setStore('startDate', new Date().getTime())
     props.history.replace('/experiment/entry')
