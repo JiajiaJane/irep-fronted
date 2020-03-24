@@ -50,7 +50,9 @@ const ExamForm = (props: ExamFormProps) => {
       })
       setCompletionQuestions(newCompletionQuestions)
       if(props.iStudy){
-        setFieldsValue(getLocalStore(props.experimentId+'userAnswer'))
+        setFieldsValue(getLocalStore('studyAnswer'+props.experimentId))
+      }else{
+        setFieldsValue(getLocalStore('examAnswer'+props.experimentId))
       }
       
     }
@@ -65,7 +67,9 @@ const ExamForm = (props: ExamFormProps) => {
         setValidError(false)
         const fieldValue = getFieldsValue()
         if(props.iStudy){
-          setLocalStore(props.experimentId+"userAnswer",JSON.stringify(fieldValue))
+          setLocalStore("studyAnswer"+props.experimentId,JSON.stringify(fieldValue))
+        }else{
+          setLocalStore("examAnswer"+props.experimentId,JSON.stringify(fieldValue))
         }
         const newFiledValue = handleAnser(fieldValue)
         saveExaminationAnswer(newFiledValue)
@@ -153,14 +157,21 @@ const ExamForm = (props: ExamFormProps) => {
   /** 渲染完成题组件 */
   const renderCompletionQuestion = () => {
     // 判断是否有初始答案
-    const initalAnswer=props.iStudy&&getLocalStore(props.experimentId+"userAnswer")!=null
+    if(props.iStudy&&getLocalStore("studyAnswer"+props.experimentId)!=null){
+      var Answer=true
+      var initialAnswer=getLocalStore("studyAnswer"+props.experimentId)
+    }
+    if(!props.iStudy&&getLocalStore("examAnswer"+props.experimentId)!=null){
+      var Answer=true
+      var initialAnswer=getLocalStore("examAnswer"+props.experimentId)
+    }
     return completionQuestions.map((i, index) => {
       return (
         <div key={index} className={styles.Item}>
           <span className={styles.QuestionText}>{`${index + 1}.${i.prefix}`}</span>
           <Form.Item className={`GlobalExamItem ${styles.FormInput}`}>
             {getFieldDecorator(`completion${index + 1}`, {
-              initialValue:initalAnswer?getLocalStore(props.experimentId+"userAnswer")['completion'+(index+1)]:'',
+              initialValue: Answer?initialAnswer['completion'+(index+1)]:'',
               rules: [{ required: true, message: '请输入答案' }]
             })(<Input placeholder="" onChange={clearErrorTips} autoComplete="off" />)}
           </Form.Item>
