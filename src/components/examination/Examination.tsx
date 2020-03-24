@@ -9,6 +9,7 @@ import { OriginCompletionQuestion, ChoiceQuestion, ProcessedCompletionQuestion, 
 import { requestFn } from '../../utils/request'
 import { useDispatch } from '../../store/Store'
 import { Actions } from '../../store/Actions'
+import { setLocalStore, getLocalStore } from '../../utils/util'
 
 const CheckboxGroup = Checkbox.Group
 
@@ -34,7 +35,7 @@ const ExamForm = (props: ExamFormProps) => {
   const [validError, setValidError] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const { getFieldDecorator, validateFields, getFieldsValue } = props.form
+  const { getFieldDecorator, validateFields, getFieldsValue,setFieldsValue } = props.form
 
   useEffect(() => {
     /** 将原始完成题目处理成页面可用的完成题目 */
@@ -48,8 +49,11 @@ const ExamForm = (props: ExamFormProps) => {
         }
       })
       setCompletionQuestions(newCompletionQuestions)
+      if(props.iStudy){
+        setFieldsValue(getLocalStore(props.experimentId+'userAnswer'))
+      }
+      
     }
-
     handleCompletionQuestions(props.completionQuestions)
   }, [props.completionQuestions])
 
@@ -60,6 +64,9 @@ const ExamForm = (props: ExamFormProps) => {
       if (!err) {
         setValidError(false)
         const fieldValue = getFieldsValue()
+        if(props.iStudy){
+          setLocalStore(props.experimentId+"userAnswer",JSON.stringify(fieldValue))
+        }
         const newFiledValue = handleAnser(fieldValue)
         saveExaminationAnswer(newFiledValue)
       } else {
@@ -89,6 +96,7 @@ const ExamForm = (props: ExamFormProps) => {
         }
       }, 1000)
     } else {
+      console.log(...answer)
       setLoading(false)
       errorTips('保存答案失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
@@ -144,12 +152,15 @@ const ExamForm = (props: ExamFormProps) => {
 
   /** 渲染完成题组件 */
   const renderCompletionQuestion = () => {
+    // 判断是否有初始答案
+    const initalAnswer=props.iStudy&&getLocalStore(props.experimentId+"userAnswer")!=null
     return completionQuestions.map((i, index) => {
       return (
         <div key={index} className={styles.Item}>
           <span className={styles.QuestionText}>{`${index + 1}.${i.prefix}`}</span>
           <Form.Item className={`GlobalExamItem ${styles.FormInput}`}>
             {getFieldDecorator(`completion${index + 1}`, {
+              initialValue:initalAnswer?getLocalStore(props.experimentId+"userAnswer")['completion'+(index+1)]:'',
               rules: [{ required: true, message: '请输入答案' }]
             })(<Input placeholder="" onChange={clearErrorTips} autoComplete="off" />)}
           </Form.Item>
@@ -209,6 +220,7 @@ const ExamForm = (props: ExamFormProps) => {
   }
 
   const renderTips = () => {
+    
     return <p className={styles.Tips}>{validError ? '请完成所有的题目' : ''}</p>
   }
 
