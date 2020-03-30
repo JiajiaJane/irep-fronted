@@ -9,6 +9,7 @@ import styles from './PretreatmentExperiment.module.less'
 import { requestFn } from '../../../utils/request'
 import WordCloud from '../../../components/wordCloud/WordCloud'
 import { setStore } from '../../../utils/util'
+import { setLocalStore, getLocalStore } from '../../../utils/util'
 
 const { TextArea } = Input
 const { Option } = Select
@@ -52,6 +53,10 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
     }
 
     getDoc(docId)
+
+    if (getLocalStore('pretreatmentAnswer') != null) {
+      setAnalysisText(getLocalStore('pretreatmentAnswer'))
+    }
   }, [dispatch, docId])
 
   /**
@@ -78,6 +83,7 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
       successTips('提交成功', '简答题分数已更新')
       setSavedContent(true)
       setSaveStepIndex(saveStepIndex + 1)
+      setLocalStore('pretreatmentAnswer', analysisText)
     } else {
       errorTips('提交失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
@@ -179,15 +185,15 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
       url: '/score/updateSubScore',
       method: 'post',
       params: {
-        experimentId: 2,
+        experimentId: 2
       }
     })
-    if(res_1 && res_1.status === 200 && res_1.data && res_1.data.code === 0){
+    if (res_1 && res_1.status === 200 && res_1.data && res_1.data.code === 0) {
       successTips('子实验分数保存成功', '')
       props.history.replace('/experiment/invertedIndex')
-    }else{
-      errorTips("子实验分数保存失败")
-    } 
+    } else {
+      errorTips('子实验分数保存失败')
+    }
   }
 
   /**
