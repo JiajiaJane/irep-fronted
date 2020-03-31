@@ -7,12 +7,15 @@ import { useDispatch } from '../../store/Store'
 import { Actions } from '../../store/Actions'
 import styles from './WordCloud.module.less'
 import { requestFn } from '../../utils/request'
+import { getLocalStore, setLocalStore } from '../../utils/util'
+import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 
 /**
  * 词云组件接口
  */
 interface WordCloudProps extends FormComponentProps {
   docId: number
+  readonly wordCloudId?:number
 }
 
 interface Term {
@@ -29,13 +32,41 @@ const { Option } = Select
 
 const WordCloudComponent = (props: WordCloudProps) => {
   const dispatch: Dispatch<Actions> = useDispatch()
-  const [analyzerName, setAnalyzerName] = useState('standard')
-  const [isRemoveStopWord, setIsRemoveStopWord] = useState(false)
+  const isStudy=getLocalStore('modal')=='0'
+  var analyzerName0='standard'
+  var isRemoveStopWord0=false
+  if(isStudy){
+    if(getLocalStore('StudyPretreatment')!=null){
+      if(getLocalStore('StudyPretreatment')['wordcloudfieldValue'+props.wordCloudId]!=null){
+        analyzerName0=getLocalStore('StudyPretreatment')['wordcloudfieldValue'+props.wordCloudId]['analyzerName']
+        isRemoveStopWord0=getLocalStore('StudyPretreatment')['wordcloudfieldValue'+props.wordCloudId]['isRemoveStopWord']
+      }
+       // 放弃存储词云图，时间代价太大
+      // if(getLocalStore('StudyPretreatment')['wordClouds'+props.wordCloudId]!=null){
+      //   wordclouds0=getLocalStore('StudyPretreatment')['wordClouds'+props.wordCloudId]
+      // }
+    }
+  }else{
+    if(getLocalStore('ExamPretreatment')!=null){
+      if(getLocalStore('ExamPretreatment')['wordcloudfieldValue'+props.wordCloudId]!=null){
+        analyzerName0=getLocalStore('ExamPretreatment')['wordcloudfieldValue'+props.wordCloudId]['analyzerName']
+        isRemoveStopWord0=getLocalStore('ExamPretreatment')['wordcloudfieldValue'+props.wordCloudId]['isRemoveStopWord']
+      }
+      // 放弃存储词云图，时间代价太大
+      // if(getLocalStore('ExamPretreatment')['wordClouds'+props.wordCloudId]!=null){
+      //   wordclouds0=getLocalStore('ExamPretreatment')['wordClouds'+props.wordCloudId]
+      // }
+    }
+  }
+
+  const [analyzerName, setAnalyzerName] = useState(analyzerName0)
+  const [isRemoveStopWord, setIsRemoveStopWord] = useState(isRemoveStopWord0)
   const [wordCloudLoading, setWordCloudLoading] = useState(false)
   const [wordClouds, setWordClouds] = useState<Word[]>([])
+  const { getFieldDecorator, validateFields, getFieldsValue} = props.form
+  
 
-  const { getFieldDecorator, validateFields, getFieldsValue } = props.form
-
+  
   useEffect(() => {
     /**
      * 获取词云数据
@@ -50,8 +81,18 @@ const WordCloudComponent = (props: WordCloudProps) => {
           isRemoveStopWord: bool
         }
       })
-      if (res && res.status === 200 && res.data && res.data.data) {
+      if (res && res.status === 200 && res.data && res.data) {
         setWordClouds(handleTerms(res.data.data))
+        // 放弃存储词云图，时间代价大
+        // if(isStudy){
+        //   var localData=getLocalStore('StudyPretreatment')!=null?getLocalStore('StudyPretreatment'):{}
+        //   localData['wordClouds'+props.wordCloudId]=handleTerms(res.data.data)
+        //   setLocalStore('StudyPretreatment',localData)
+        // }else{
+        //   var localData=getLocalStore('ExamPretreatment')!=null?getLocalStore('ExamPretreatment'):{}
+        //   localData['wordClouds'+props.wordCloudId]=handleTerms(res.data.data)
+        //   setLocalStore('ExamPretreatment',localData)
+        // }
         updateScore()
       } else {
         errorTips('获取词云分析失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
@@ -73,6 +114,7 @@ const WordCloudComponent = (props: WordCloudProps) => {
           operationName: '词云分析'
         }
       })
+      console.log(res)
       if (res && res.status === 200 && res.data && res.data.code === 0) {
         successTips('分析成功', '操作-"词云分析"已保存')
       } else {
@@ -105,6 +147,16 @@ const WordCloudComponent = (props: WordCloudProps) => {
     validateFields((err: any) => {
       if (!err) {
         const fieldValue = getFieldsValue(['analyzerName', 'isRemoveStopWord'])
+        if(isStudy){
+          var localData=getLocalStore('StudyPretreatment')!=null?getLocalStore('StudyPretreatment'):{}
+          localData['wordcloudfieldValue'+props.wordCloudId]=fieldValue
+          console.log(localData)
+          setLocalStore('StudyPretreatment',localData)
+        }else{
+          var localData=getLocalStore('ExamPretreatment')!=null?getLocalStore('ExamPretreatment'):{}
+          localData['wordcloudfieldValue'+props.wordCloudId]=fieldValue
+          setLocalStore('ExamPretreatment',localData)
+        }
         setAnalyzerName(fieldValue.analyzerName)
         setIsRemoveStopWord(fieldValue.isRemoveStopWord)
         setWordCloudLoading(true)
@@ -163,6 +215,24 @@ const WordCloudComponent = (props: WordCloudProps) => {
     }
   }
 
+   /**
+   * 仿真预处理器时
+   *
+   * 更新是否去停用词选项
+   */
+  const handleChecked = (e: CheckboxChangeEvent) => {
+    setIsRemoveStopWord(e.target.checked)
+    if(isStudy){
+      var localData=getLocalStore('StudyPretreatment')!=null?getLocalStore('StudyPretreatment'):{}
+      localData['isRemoveStopWord']=e.target.checked
+      setLocalStore('StudyPretreatment',localData)
+    }else{
+      var localData=getLocalStore('ExamPretreatment')!=null?getLocalStore('ExamPretreatment'):{}
+      localData['isRemoveStopWord']=e.target.checked
+      setLocalStore('ExamPretreatment',localData)
+    }
+  }
+
   return (
     <div className={styles.wordSection}>
       <div className={styles.wordCloudSectionTitle}>词云分析</div>
@@ -188,7 +258,7 @@ const WordCloudComponent = (props: WordCloudProps) => {
           <Form.Item>
             {getFieldDecorator('isRemoveStopWord', {
               initialValue: isRemoveStopWord
-            })(<Checkbox>去停用词</Checkbox>)}
+            })(<Checkbox onChange={handleChecked} checked={isRemoveStopWord}>去停用词</Checkbox>)}
           </Form.Item>
         </div>
         <Button className={styles.button} type="primary" loading={wordCloudLoading} onClick={handleAnalyze}>

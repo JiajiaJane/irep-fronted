@@ -16,12 +16,74 @@ const { Option } = Select
 
 const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
   const dispatch: Dispatch<Actions> = useDispatch()
-  const [docId, setDocId] = useState(1)
-  const [originalArticle, setOriginalArticle] = useState('')
-  const [analyzerName, setAnalyzerName] = useState('standard')
-  const [isRemoveStopWord, setIsRemoveStopWord] = useState(false)
-  const [segmentResult, setSegmentResult] = useState('分词结果')
-  const [analysisText, setAnalysisText] = useState('')
+  // 当前的模式，学习或是考核
+  const isStudy=getLocalStore('modal')=='0'
+  // docId
+  var docId0=1
+  // originalArticle
+  var originalArticle0=''
+  // 结合词云简要概述结果
+  var analysisText0=''
+  // 是否去停用词
+  var isRemoveStopWord0=false
+  // 分词器
+  var analyzerName0='standard'
+  // 分词结果
+  var segmentResult0='分词结果'
+  if(isStudy){
+    if(getLocalStore('StudyPretreatment')!=null){
+      if(getLocalStore('StudyPretreatment')['docId']!=null){
+        docId0=getLocalStore('StudyPretreatment')['docId']
+      }
+      // 原文档
+      if(getLocalStore('StudyPretreatment')['originalArticle']!=null){
+        originalArticle0=getLocalStore('StudyPretreatment')['originalArticle']
+      }
+      // 分词
+      if(getLocalStore('StudyPretreatment')['analysisText']!=null){
+        analysisText0=getLocalStore('StudyPretreatment')['analysisText']
+      }
+      // 结果
+      if(getLocalStore('StudyPretreatment')['segmentResult']!=null){
+        segmentResult0=getLocalStore('StudyPretreatment')['segmentResult']
+      }
+      // 去停用词
+      if(getLocalStore('StudyPretreatment')['isRemoveStopWord']!=null){
+        isRemoveStopWord0=getLocalStore('StudyPretreatment')['isRemoveStopWord']
+      }
+    }
+  }else{
+    if(getLocalStore('ExamPretreatment')!=null){
+      if(getLocalStore('ExamPretreatment')['docId']!=null){
+        docId0=getLocalStore('ExamPretreatment')['docId']
+      }
+      // 原文档
+      if(getLocalStore('ExamPretreatment')['originalArticle']!=null){
+        originalArticle0=getLocalStore('ExamPretreatment')['originalArticle']
+      }
+      // 分词
+      if(getLocalStore('ExamPretreatment')['analysisText']!=null){
+        analysisText0=getLocalStore('ExamPretreatment')['analysisText']
+      }
+      // 结果
+      if(getLocalStore('ExamPretreatment')['segmentResult']!=null){
+        segmentResult0=getLocalStore('ExamPretreatment')['segmentResult']
+      }
+      // 去停用词
+       // 结果
+      if(getLocalStore('ExamPretreatment')['isRemoveStopWord']!=null){
+        isRemoveStopWord0=getLocalStore('ExamPretreatment')['isRemoveStopWord']
+      }
+    }
+  }
+  
+
+  const [docId, setDocId] = useState(docId0)
+  const [originalArticle, setOriginalArticle] = useState(originalArticle0)
+  const [analyzerName, setAnalyzerName] = useState(analyzerName0)
+  const [isRemoveStopWord, setIsRemoveStopWord] = useState(isRemoveStopWord0)
+  const [segmentResult, setSegmentResult] = useState(segmentResult0)
+  const [analysisText, setAnalysisText] = useState(analysisText0)
   const [getDocLoading, setGetDocLoading] = useState(true)
   const [analyticalContentLoading, setAnalyticalContentLoading] = useState(false)
   const [savedContent, setSavedContent] = useState(false)
@@ -67,6 +129,15 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
    */
   const DocIdChange = (value: number | undefined) => {
     setDocId(value || 0)
+    if(isStudy){
+      var localData=getLocalStore('StudyPretreatment')!=null?getLocalStore('StudyPretreatment'):{}
+      localData['docId']=value||0
+      setLocalStore('StudyPretreatment',localData)
+    }else{
+      var localData=getLocalStore('ExamPretreatment')!=null?getLocalStore('ExamPretreatment'):{}
+      localData['docId']=value||0
+      setLocalStore('ExamPretreatment',localData)
+    }
   }
 
   /**
@@ -86,10 +157,14 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
       successTips('提交成功', '简答题分数已更新')
       setSavedContent(true)
       setSaveStepIndex(saveStepIndex + 1)
-      if (getLocalStore('modal') == 0) {
-        setLocalStore('studyPretreatmentAnswer', analysisText)
-      } else {
-        setLocalStore('examPretreatmentAnswer', analysisText)
+      if(isStudy){
+        var localData=getLocalStore('StudyPretreatment')!=null?getLocalStore('StudyPretreatment'):{}
+        localData['analysisText']=analysisText
+        setLocalStore('StudyPretreatment',localData)
+      }else{
+        var localData=getLocalStore('ExamPretreatment')!=null?getLocalStore('ExamPretreatment'):{}
+        localData['analysisText']=analysisText
+        setLocalStore('ExamPretreatment',localData)
       }
     } else {
       errorTips('提交失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
@@ -125,6 +200,15 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
    */
   const handleChoose = (value: string) => {
     setAnalyzerName(value)
+    if(isStudy){
+      var localData=getLocalStore('StudyPretreatment')!=null?getLocalStore('StudyPretreatment'):{}
+      localData['analyzerName']=value
+      setLocalStore('StudyPretreatment',localData)
+    }else{
+      var localData=getLocalStore('ExamPretreatment')!=null?getLocalStore('ExamPretreatment'):{}
+      localData['analyzerName']=value
+      setLocalStore('ExamPretreatment',localData)
+    }
   }
 
   /**
@@ -134,6 +218,15 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
    */
   const handleChecked = (e: CheckboxChangeEvent) => {
     setIsRemoveStopWord(e.target.checked)
+    if(isStudy){
+      var localData=getLocalStore('StudyPretreatment')!=null?getLocalStore('StudyPretreatment'):{}
+      localData['isRemoveStopWord']=e.target.checked
+      setLocalStore('StudyPretreatment',localData)
+    }else{
+      var localData=getLocalStore('ExamPretreatment')!=null?getLocalStore('ExamPretreatment'):{}
+      localData['isRemoveStopWord']=e.target.checked
+      setLocalStore('ExamPretreatment',localData)
+    }
   }
 
   /**
@@ -154,6 +247,15 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
       if (res.data.push) {
         setSegmentResult(res.data.join(' '))
         updatePreProcessScore()
+      }
+      if(isStudy){
+        var localData=getLocalStore('StudyPretreatment')!=null?getLocalStore('StudyPretreatment'):{}
+        localData['segmentResult']=res.data.join(' ')
+        setLocalStore('StudyPretreatment',localData)
+      }else{
+        var localData=getLocalStore('ExamPretreatment')!=null?getLocalStore('ExamPretreatment'):{}
+        localData['segmentResult']=res.data.join(' ')
+        setLocalStore('ExamPretreatment',localData)
       }
     } else {
       errorTips('分析失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
@@ -223,8 +325,8 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
         <div className={styles.originalArticleBox}>{originalArticle}</div>
       </Spin>
       <div className={styles.wordCloudSection}>
-        <WordCloud docId={docId} />
-        <WordCloud docId={docId} />
+        <WordCloud docId={docId} wordCloudId={1}/>
+        <WordCloud docId={docId} wordCloudId={2}/>
       </div>
       <div className={styles.concludeSection}>
         <div className={styles.SectionTitle}>请结合词云分析结果简要概述各预处理器处理效果：</div>
@@ -251,7 +353,7 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
               <Option value="smartChinese">中文智能分词器</Option>
             </Select>
           </div>
-          <Checkbox onChange={handleChecked}>是否去停用词</Checkbox>
+          <Checkbox onChange={handleChecked} checked={isRemoveStopWord}>是否去停用词</Checkbox>
           <Button loading={preProcessLoading} type="primary" disabled={preProcessed} onClick={handelAnalyze}>
             分析
           </Button>
@@ -262,7 +364,8 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
           className={styles.NextBtn}
           type="primary"
           onClick={handleClick}
-          disabled={saveStepIndex < 1 || !preProcessed}>
+          // disabled={saveStepIndex < 1 || !preProcessed}>
+          >
           下一步
         </Button>
       </div>
