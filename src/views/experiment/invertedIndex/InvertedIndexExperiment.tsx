@@ -6,6 +6,7 @@ import { useDispatch, useMappedState, State, ExperimentCard } from '../../../sto
 import { Actions } from '../../../store/Actions'
 import styles from './InvertedIndexExperiment.module.less'
 import { requestFn } from '../../../utils/request'
+import { setLocalStore, getLocalStore } from '../../../utils/util'
 
 interface FullIndex {
   id: number
@@ -28,6 +29,8 @@ interface OriginDoc {
   content: string
   docId: number
 }
+
+
 
 const defaultTerms: FullIndex[] = [
   {
@@ -194,9 +197,76 @@ const defaultOriginDoc: OriginDoc = {
   docId: 0
 }
 
+const defaultInvertedAnswer={
+      "1"	:''	,
+      "2"	:''	,
+      "3"	:	''	,
+      "4"	:''	,
+      "5"	:	'',
+      "6"	: '',
+      "7"	:	'',
+      "8"	:	''	,
+      "9"	:	'',
+      "10"	:	''	,
+      "11"	:''	,
+      "12"	:	''	,
+      "13"	:	''	,
+      "14"	:	''	,
+      "15"	:	''	,
+      "16"	:	''	,
+      "17"	:	''	,
+      "18"	:''	,
+      "19"	:	''	,
+      "20"	:	''	
+}
+
 const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
   const dispatch: Dispatch<Actions> = useDispatch()
   const state: State = useMappedState(useCallback((globalState: State) => globalState, []))
+  // 当前的模式，学习或是考核
+  const isStudy=getLocalStore('modal')=='0'
+  var InvertedAnswer=defaultInvertedAnswer
+  var  finalFullIndexData=[]
+  var OriginDoc0=defaultOriginDoc
+  var finalDocs=[]
+  // 获取本地已有存储值
+  if(isStudy){
+    if(getLocalStore('StudyInvertedIndex')!=null){
+      if(getLocalStore('StudyInvertedIndex')['InvertedAnswer']!=null){
+        InvertedAnswer=getLocalStore('StudyInvertedIndex')['InvertedAnswer']
+      }
+      // 全部倒排记录表
+      if(getLocalStore('StudyInvertedIndex')['finalFullIndexData']!=null){
+        finalFullIndexData=getLocalStore('StudyInvertedIndex')['finalFullIndexData']
+      }
+      // 原文档
+      if(getLocalStore('StudyInvertedIndex')['OriginDoc']!=null){
+        OriginDoc0=getLocalStore('StudyInvertedIndex')['OriginDoc']
+      }
+      // 单个词的全部倒排记录表
+      if(getLocalStore('StudyInvertedIndex')['finalDocs']!=null){
+        finalDocs=getLocalStore('StudyInvertedIndex')['finalDocs']
+      }
+    }
+  }else{
+    if(getLocalStore('ExamInvertedIndex')!=null){
+      if(getLocalStore('ExamInvertedIndex')['InvertedAnswer']!=null){
+        InvertedAnswer=getLocalStore('ExamInvertedIndex')['InvertedAnswer']
+      }
+      // 全部倒排记录表
+      if(getLocalStore('ExamInvertedIndex')['finalFullIndexData']!=null){
+        finalFullIndexData=getLocalStore('ExamInvertedIndex')['finalFullIndexData']
+      }
+      // 原文档
+      if(getLocalStore('ExamInvertedIndex')['OriginDoc']!=null){
+        OriginDoc0=getLocalStore('ExamInvertedIndex')['OriginDoc']
+      }
+      // 单个词的全部倒排记录表
+      if(getLocalStore('ExamInvertedIndex')['finalDocs']!=null){
+        finalDocs=getLocalStore('ExamInvertedIndex')['finalDocs']
+      }
+    }
+  }
   // 当前选中的词项
   const [currentTerm, setCurrentTerm] = useState<FullIndex>()
   // 当前选中词项下面的某一条文档id记录
@@ -205,29 +275,29 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
   const [invertedIndexLoading, setInvertedIndexLoading] = useState(false)
   const [docLoading, setDocLoading] = useState(false)
   const [saveOrderLoading, setSaveOrderLoading] = useState(false)
-  const [terms, setTerms] = useState<FullIndex[]>([])
-  const [docs, setDocs] = useState<InvertedIndex[]>([])
-  const [originDoc, setOriginDoc] = useState<OriginDoc>(defaultOriginDoc)
-  const[quiz1,setQuiz1]=useState('')
-  const[quiz2,setQuiz2]=useState('')
-  const[quiz3,setQuiz3]=useState('')
-  const[quiz4,setQuiz4]=useState('')
-  const[quiz5,setQuiz5]=useState('')
-  const[quiz6,setQuiz6]=useState('')
-  const[quiz7,setQuiz7]=useState('')
-  const[quiz8,setQuiz8]=useState('')
-  const[quiz9,setQuiz9]=useState('')
-  const[quiz10,setQuiz10]=useState('')
-  const[quiz11,setQuiz11]=useState('')
-  const[quiz12,setQuiz12]=useState('')
-  const[quiz13,setQuiz13]=useState('')
-  const[quiz14,setQuiz14]=useState('')
-  const[quiz15,setQuiz15]=useState('')
-  const[quiz16,setQuiz16]=useState('')
-  const[quiz17,setQuiz17]=useState('')
-  const[quiz18,setQuiz18]=useState('')
-  const[quiz19,setQuiz19]=useState('')
-  const[quiz20,setQuiz20]=useState('')
+  const [terms, setTerms] = useState<FullIndex[]>(finalFullIndexData)
+  const [docs, setDocs] = useState<InvertedIndex[]>(finalDocs)
+  const [originDoc, setOriginDoc] = useState<OriginDoc>(OriginDoc0)
+  const[quiz1,setQuiz1]=useState(InvertedAnswer['1'])
+  const[quiz2,setQuiz2]=useState(InvertedAnswer['2'])
+  const[quiz3,setQuiz3]=useState(InvertedAnswer['3'])
+  const[quiz4,setQuiz4]=useState(InvertedAnswer['4'])
+  const[quiz5,setQuiz5]=useState(InvertedAnswer['5'])
+  const[quiz6,setQuiz6]=useState(InvertedAnswer['6'])
+  const[quiz7,setQuiz7]=useState(InvertedAnswer['7'])
+  const[quiz8,setQuiz8]=useState(InvertedAnswer["8"])
+  const[quiz9,setQuiz9]=useState(InvertedAnswer["9"])
+  const[quiz10,setQuiz10]=useState(InvertedAnswer['10'])
+  const[quiz11,setQuiz11]=useState(InvertedAnswer['11'])
+  const[quiz12,setQuiz12]=useState(InvertedAnswer['12'])
+  const[quiz13,setQuiz13]=useState(InvertedAnswer['13'])
+  const[quiz14,setQuiz14]=useState(InvertedAnswer['14'])
+  const[quiz15,setQuiz15]=useState(InvertedAnswer['15'])
+  const[quiz16,setQuiz16]=useState(InvertedAnswer['16'])
+  const[quiz17,setQuiz17]=useState(InvertedAnswer['17'])
+  const[quiz18,setQuiz18]=useState(InvertedAnswer['18'])
+  const[quiz19,setQuiz19]=useState(InvertedAnswer['19'])
+  const[quiz20,setQuiz20]=useState(InvertedAnswer['20'])
 
 
   const handleClick = async () => {
@@ -375,6 +445,16 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
   const handleFullIndex = (data: FullIndex[]) => {
     const finalFullIndexData = data.filter((_, index) => index < 10)
     setTerms(finalFullIndexData)
+    // 区分考核模式和学习模式
+    if(isStudy){
+      var localData=getLocalStore('StudyInvertedIndex')!=null?getLocalStore('StudyInvertedIndex'):{}
+      localData['finalFullIndexData']=finalFullIndexData
+      setLocalStore('StudyInvertedIndex',localData)
+    }else{
+      var localData=getLocalStore('ExamInvertedIndex')!=null?getLocalStore('ExamInvertedIndex'):{}
+      localData['finalFullIndexData']=finalFullIndexData
+      setLocalStore('ExamInvertedIndex',localData)
+    }
   }
 
   /**
@@ -383,6 +463,15 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
   const getInvertedIndex = async (item: FullIndex) => {
     setCurrentTerm(item)
     setInvertedIndexLoading(true)
+    if(isStudy){
+      var localData=getLocalStore('StudyInvertedIndex')!=null?getLocalStore('StudyInvertedIndex'):{}
+      localData['CurrentTerm']=item
+      setLocalStore('StudyInvertedIndex',localData)
+    }else{
+      var localData=getLocalStore('ExamInvertedIndex')!=null?getLocalStore('ExamInvertedIndex'):{}
+      localData['CurrentTerm']=item
+      setLocalStore('ExamInvertedIndex',localData)
+    }
     const res = await requestFn(dispatch, {
       url: '/IRforCN/invertedIndex/invertedIndex',
       method: 'post',
@@ -436,6 +525,18 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
     })
     if (res && res.status === 200 && res.data) {
       setOriginDoc(res.data)
+      if(isStudy){
+        var localData=getLocalStore('StudyInvertedIndex')!=null?getLocalStore('StudyInvertedIndex'):{}
+        localData['OriginDoc']=res.data
+        localData['CurrentDoc']=item
+        setLocalStore('StudyInvertedIndex',localData)
+      }else{
+        var localData=getLocalStore('ExamInvertedIndex')!=null?getLocalStore('ExamInvertedIndex'):{}
+        localData['OriginDoc']=res.data
+        localData['CurrentDoc']=item
+        setLocalStore('ExamInvertedIndex',localData)
+      }
+      
     } else {
       errorTips('获取原文件失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
@@ -450,6 +551,16 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
   const handleDocs = (data: InvertedIndex[]) => {
     const finalDocs = data.filter((_, index) => index < 10)
     setDocs(finalDocs)
+    if(isStudy){
+      var localData=getLocalStore('StudyInvertedIndex')!=null?getLocalStore('StudyInvertedIndex'):{}
+      localData['finalDocs']=finalDocs
+      setLocalStore('StudyInvertedIndex',localData)
+    }else{
+      var localData=getLocalStore('ExamInvertedIndex')!=null?getLocalStore('ExamInvertedIndex'):{}
+      localData['finalDocs']=finalDocs
+      setLocalStore('ExamInvertedIndex',localData)
+    }
+   
   }
 
   /**
@@ -540,34 +651,46 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
 
   // 传回倒排索引小练习的用户答案
   const quizhandleClick=async ()=>{
+    const data= {
+      "1"	:quiz1	,
+      "2"	:	quiz2	,
+      "3"	:	quiz3	,
+      "4"	:	quiz4	,
+      "5"	:	quiz5,
+      "6"	: quiz6,
+      "7"	:	quiz7,
+      "8"	:	quiz8	,
+      "9"	:	quiz9	,
+      "10"	:	quiz10	,
+      "11"	:	quiz11	,
+      "12"	:	quiz12	,
+      "13"	:	quiz13	,
+      "14"	:	quiz14	,
+      "15"	:	quiz15	,
+      "16"	:	quiz16	,
+      "17"	:	quiz17	,
+      "18"	:	quiz18	,
+      "19"	:	quiz19	,
+      "20"	:	quiz20	
+    }
+    console.log(data)
     const res = await requestFn(dispatch, {
       url: '/score/updateInvertedScore',
       method: 'post',
-      data: {
-        "1"	:quiz1	,
-        "2"	:	quiz2	,
-        "3"	:	quiz3	,
-        "4"	:	quiz4	,
-        "5"	:	quiz5,
-        "6"	: quiz6,
-        "7"	:	quiz7,
-        "8"	:	quiz8	,
-        "9"	:	quiz9	,
-        "10"	:	quiz10	,
-        "11"	:	quiz11	,
-        "12"	:	quiz12	,
-        "13"	:	quiz13	,
-        "14"	:	quiz14	,
-        "15"	:	quiz15	,
-        "16"	:	quiz16	,
-        "17"	:	quiz17	,
-        "18"	:	quiz18	,
-        "19"	:	quiz19	,
-        "20"	:	quiz20	
-      }
+      data:data
     })
     if (res && res.status === 200 && res.data && res.data.code === 0) {
       successTips('提交成功', '')
+      if(isStudy){
+        var localData=getLocalStore('StudyInvertedIndex')!=null?getLocalStore('StudyInvertedIndex'):{}
+        localData['InvertedAnswer']=data
+        setLocalStore('StudyInvertedIndex',localData)
+      }else{
+        var localData=getLocalStore('ExamInvertedIndex')!=null?getLocalStore('ExamInvertedIndex'):{}
+        console.log(localData)
+        localData['InvertedAnswer']=data
+        setLocalStore('ExamInvertedIndex',localData)
+      } 
     } else {
       errorTips('提交失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
