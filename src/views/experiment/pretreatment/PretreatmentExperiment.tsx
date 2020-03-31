@@ -54,8 +54,11 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
 
     getDoc(docId)
 
-    if (getLocalStore('pretreatmentAnswer') != null) {
-      setAnalysisText(getLocalStore('pretreatmentAnswer'))
+    if (getLocalStore('modal') == 0 && getLocalStore('studyPretreatmentAnswer') != null) {
+      setAnalysisText(getLocalStore('studyPretreatmentAnswer'))
+    }
+    if (getLocalStore('modal') == 1 && getLocalStore('examPretreatmentAnswer') != null) {
+      setAnalysisText(getLocalStore('examPretreatmentAnswer'))
     }
   }, [dispatch, docId])
 
@@ -83,7 +86,11 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
       successTips('提交成功', '简答题分数已更新')
       setSavedContent(true)
       setSaveStepIndex(saveStepIndex + 1)
-      setLocalStore('pretreatmentAnswer', analysisText)
+      if (getLocalStore('modal') == 0) {
+        setLocalStore('studyPretreatmentAnswer', analysisText)
+      } else {
+        setLocalStore('examPretreatmentAnswer', analysisText)
+      }
     } else {
       errorTips('提交失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
