@@ -479,9 +479,8 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
         term: item.term
       }
     })
-    console.log(res)
     if (res && res.status === 200 && res.data) {
-      if(res.data.code=-1){
+      if(res.data.code==-1){
         errorTips('获取当前词项倒排记录失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
       }else{
         saveOperationStep(res.data)
@@ -506,7 +505,7 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
       }
     })
     setInvertedIndexLoading(false)
-    if (res && res.status === 200 && res.data!=null) {
+    if (res && res.status === 200 && res.data) {
       handleDocs(data)
       setCurrentDoc(undefined)
       setOriginDoc(defaultOriginDoc)
