@@ -15,7 +15,7 @@ import {
   VectorSpacePreProcessQuery,
   QuerySimilarityResult
 } from '../../../modal/Search'
-import { getStore } from '../../../utils/util'
+import { getStore, getLocalStore, setLocalStore } from '../../../utils/util'
 
 /**
  * 列对齐方式类型(与ant-design保持一致)
@@ -32,33 +32,113 @@ interface Tips {
 
 const { Option } = Select
 
+
 const LanguageExperimentComponent = (props: RouteComponentProps) => {
   const dispatch: Dispatch<Actions> = useDispatch()
   const state: State = useMappedState(useCallback((globalState: State) => globalState, []))
   // 保存顺序加载状态
   const [saveOrderLoading, setSaveOrderLoading] = useState(false)
+  const isStudy=getLocalStore("modal")=='0'
+  // 是否是回退
+  var isSaved0=false
+  // 获取未存储或存储模型名称
+  var modelName0='一元语言模型'
+  // 存储平滑系数a
+  var SmoothParam0=0.5
+  // 选择的查询
+  var SelectedQuery0=''
+  var StandardData0=[]
+  var TestData0=[]
+  // 输入的查询
+  var Query0=''
+  var SearchResult0=[]
+  var SearchSimilarityResult0=[]
+  if(isStudy){
+    if(getLocalStore('StudyLanguage')!=null){
+      if(getLocalStore('StudyLanguage')['isSaved']!=null){
+        isSaved0=getLocalStore('StudyLanguage')['isSaved']
+      }
+      if(getLocalStore('StudyLanguage')['ModelName']!=null){
+        modelName0=getLocalStore('StudyLanguage')['ModelName']
+      }
+      if(getLocalStore('StudyLanguage')['SmoothParam']!=null){
+        SmoothParam0=getLocalStore('StudyLanguage')['SmoothParam']
+      }
+      if(getLocalStore('StudyLanguage')['SelectedQuery']!=null){
+        SelectedQuery0=getLocalStore('StudyLanguage')['SelectedQuery']
+      }
+      if(getLocalStore('StudyLanguage')['StandardData']!=null){
+        StandardData0=getLocalStore('StudyLanguage')['StandardData']
+      }
+      if(getLocalStore('StudyLanguage')['TestData']!=null){
+        TestData0=getLocalStore('StudyLanguage')['TestData']
+      }
+      if(getLocalStore('StudyLanguage')['Query']!=null){
+        Query0=getLocalStore('StudyLanguage')['Query']
+      }
+      if(getLocalStore('StudyLanguage')['SearchResult']!=null){
+        SearchResult0=getLocalStore('StudyLanguage')['SearchResult']
+      }
+      if(getLocalStore('StudyLanguage')['SearchSimilarityResult']!=null){
+        SearchSimilarityResult0=getLocalStore('StudyLanguage')['SearchSimilarityResult']
+      }
+    }
+  }else{
+    if(getLocalStore('ExamLanguage')!=null){
+      if(getLocalStore('ExamLanguage')['isSaved']!=null){
+        isSaved0=getLocalStore('ExamLanguage')['isSaved']
+      }
+      if(getLocalStore('ExamLanguage')['ModelName']!=null){
+        modelName0=getLocalStore('ExamLanguage')['ModelName']
+      }
+      if(getLocalStore('ExamLanguage')['SmoothParam']!=null){
+        SmoothParam0=getLocalStore('ExamLanguage')['SmoothParam']
+      }
+      if(getLocalStore('ExamLanguage')['SelectedQuery']!=null){
+        SelectedQuery0=getLocalStore('ExamLanguage')['SelectedQuery']
+      }
+      if(getLocalStore('ExamLanguage')['StandardData']!=null){
+        StandardData0=getLocalStore('ExamLanguage')['StandardData']
+      }
+      if(getLocalStore('ExamLanguage')['TestData']!=null){
+        TestData0=getLocalStore('ExamLanguage')['TestData']
+      }
+      if(getLocalStore('ExamLanguage')['Query']!=null){
+        Query0=getLocalStore('ExamLanguage')['Query']
+      }
+      if(getLocalStore('ExamLanguage')['SearchResult']!=null){
+        SearchResult0=getLocalStore('ExamLanguage')['SearchResult']
+      }
+      if(getLocalStore('ExamLanguage')['SearchSimilarityResult']!=null){
+        SearchSimilarityResult0=getLocalStore('ExamLanguage')['SearchSimilarityResult']
+      }
+    }
+  }
+
+  // 判断是否已经实验过只是回退
+  const [isSaved,setIsSaved]=useState(isSaved0)
   // 仿真我的搜索引擎，输入框中的值
-  const [query, setQuery] = useState('')
-  const [selectedQuery, setSelectedQuery] = useState('')
+  const [query, setQuery] = useState(Query0)
+  const [selectedQuery, setSelectedQuery] = useState(SelectedQuery0)
   const [searchLoading, setSearchLoading] = useState(false)
-  const [modelName, setModelName] = useState('一元语言模型')
-  const [smoothParam, setSmoothParam] = useState(0.5)
+  const [modelName, setModelName] = useState(modelName0)
+  const [smoothParam, setSmoothParam] = useState(SmoothParam0)
   const [calculationLoading, setCalculationLoading] = useState(false)
   // 仿真我的搜索引擎，每一步的请求loading状态
   const [stepLoading, setStepLoading] = useState(false)
   // 仿真我的搜索引擎步骤索引
-  const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const [currentStepIndex, setCurrentStepIndex] = useState(isSaved?4:0)
   const [lastStepIndex, setLastStepIndex] = useState(0)
-  const [standardData, setStandardData] = useState<StandardResult[]>([])
-  const [testData, setTestData] = useState<StandardResult[]>([])
+  const [standardData, setStandardData] = useState<StandardResult[]>(StandardData0)
+  const [testData, setTestData] = useState<StandardResult[]>(TestData0)
   // 检索结果
-  const [searchResult, setSearchResult] = useState<SearchResult[]>([])
+  const [searchResult, setSearchResult] = useState<SearchResult[]>(SearchResult0)
   // 求索引项结果
   const [searchPreProcessResult, setSearchPreProcessResult] = useState<VectorSpacePreProcessQuery>()
   // 求系数bij结果
   const [searchLMResult, setSearchLMResult] = useState<QueryDocTFResult>()
   // 求相似度及相似度降序排序的结果
-  const [searchSimilarityResult, setSearchSimilarityResult] = useState<QuerySimilarityResult[]>([])
+  const [searchSimilarityResult, setSearchSimilarityResult] = useState<QuerySimilarityResult[]>(SearchResult0)
   const [nextLoading, setNextLoading] = useState(false)
 
   /**
@@ -264,6 +344,16 @@ const LanguageExperimentComponent = (props: RouteComponentProps) => {
     if (res && res.status === 200 && res.data && res.data.code === 0) {
       successTips('保存顺序成功', '')
       updateSaveOrderBtnStatus()
+      setIsSaved(true)
+      if(isStudy){
+        var localdata=getLocalStore('StudyLanguage')!=null?getLocalStore('StudyLanguage'):{}
+        localdata['isSaved']=true
+        setLocalStore('StudyLanguage',localdata)
+      }else{
+        var localdata=getLocalStore('ExamLanguage')!=null?getLocalStore('ExamLanguage'):{}
+        localdata['isSaved']=true
+        setLocalStore('ExamLanguage',localdata)
+      }
     } else {
       // 保存顺序失败
       errorTips('保存顺序失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
@@ -396,6 +486,15 @@ const LanguageExperimentComponent = (props: RouteComponentProps) => {
    */
   const handleModelChoose = (value: string) => {
     setModelName(value)
+    if(isStudy){
+      var localdata=getLocalStore('StudyLanguage')!=null?getLocalStore('StudyLanguage'):{}
+      localdata['ModelName']=value
+      setLocalStore('StudyLanguage',localdata)
+    }else{
+      var localdata=getLocalStore('ExamLanguage')!=null?getLocalStore('ExamLanguage'):{}
+      localdata['ModelName']=value
+      setLocalStore('ExamLanguage',localdata)
+    }
   }
 
   /**
@@ -403,6 +502,15 @@ const LanguageExperimentComponent = (props: RouteComponentProps) => {
    */
   const onInputNumberChange = (value: number | undefined) => {
     setSmoothParam(value || 0.5)
+    if(isStudy){
+      var localdata=getLocalStore('StudyLanguage')!=null?getLocalStore('StudyLanguage'):{}
+      localdata['SmoothParam']=value
+      setLocalStore('StudyLanguage',localdata)
+    }else{
+      var localdata=getLocalStore('ExamLanguage')!=null?getLocalStore('ExamLanguage'):{}
+      localdata['SmoothParam']=value
+      setLocalStore('ExamLanguage',localdata)
+    }
   }
 
   /**
@@ -410,6 +518,15 @@ const LanguageExperimentComponent = (props: RouteComponentProps) => {
    */
   const updateQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value)
+    if(isStudy){
+      var localdata=getLocalStore('StudyLanguage')!=null?getLocalStore('StudyLanguage'):{}
+      localdata['Query']=event.target.value
+      setLocalStore('StudyLanguage',localdata)
+    }else{
+      var localdata=getLocalStore('ExamLanguage')!=null?getLocalStore('ExamLanguage'):{}
+      localdata['Query']=event.target.value
+      setLocalStore('ExamLanguage',localdata)
+    }
   }
 
   /**
@@ -417,6 +534,15 @@ const LanguageExperimentComponent = (props: RouteComponentProps) => {
    */
   const updateSelectValue = (value: string) => {
     setSelectedQuery(value)
+    if(isStudy){
+      var localdata=getLocalStore('StudyLanguage')!=null?getLocalStore('StudyLanguage'):{}
+      localdata['SelectedQuery']=value
+      setLocalStore('StudyLanguage',localdata)
+    }else{
+      var localdata=getLocalStore('ExamLanguage')!=null?getLocalStore('ExamLanguage'):{}
+      localdata['SelectedQuery']=value
+      setLocalStore('ExamLanguage',localdata)
+    }
   }
 
   /**
@@ -478,6 +604,17 @@ const LanguageExperimentComponent = (props: RouteComponentProps) => {
     if (res && res.status === 200 && res.data && res.data.standardResults && res.data.testResults) {
       setStandardData(handleTestRetrieverResult(res.data.standardResults))
       setTestData(handleTestRetrieverResult(res.data.testResults))
+      if(isStudy){
+        var localdata=getLocalStore('StudyLanguage')!=null?getLocalStore('StudyLanguage'):{}
+        localdata['StandardData']=handleTestRetrieverResult(res.data.standardResults)
+        localdata['TestData']=handleTestRetrieverResult(res.data.testResults)
+        setLocalStore('StudyLanguage',localdata)
+      }else{
+        var localdata=getLocalStore('ExamLanguage')!=null?getLocalStore('ExamLanguage'):{}
+        localdata['StandardData']=handleTestRetrieverResult(res.data.standardResults)
+        localdata['TestData']=handleTestRetrieverResult(res.data.testResults)
+        setLocalStore('ExamLanguage',localdata)
+      }
     } else {
       errorTips('计算相似度失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
@@ -561,6 +698,15 @@ const LanguageExperimentComponent = (props: RouteComponentProps) => {
       setSearchResult(data as SearchResult[])
       setCurrentStepIndex(0)
       setSearchLoading(false)
+      if(isStudy){
+        var localdata=getLocalStore('StudyLanguage')!=null?getLocalStore('StudyLanguage'):{}
+        localdata['SearchResult']=data as SearchResult[]
+        setLocalStore('StudyLanguage',localdata)
+      }else{
+        var localdata=getLocalStore('ExamLanguage')!=null?getLocalStore('ExamLanguage'):{}
+        localdata['SearchResult']=data as SearchResult[]
+        setLocalStore('ExamLanguage',localdata)
+      }
     } else {
       setCurrentStepIndex(index + 1)
       handleStepSearchResult(index, data as VectorSpacePreProcessQuery | QueryDocTFResult | QuerySimilarityResult[])
@@ -636,7 +782,7 @@ const LanguageExperimentComponent = (props: RouteComponentProps) => {
     return (
       <div className={styles.SelectWrapper}>
         <span className={styles.SelectLabel}>请选择标准查询:</span>
-        <Select className={`GlobalSelect ${styles.Select}`} size="large" onChange={updateSelectValue}>
+        <Select className={`GlobalSelect ${styles.Select}`} size="large" onChange={updateSelectValue} defaultValue={selectedQuery}>
           {renderSelectOptions()}
         </Select>
         <Button
@@ -714,7 +860,8 @@ const LanguageExperimentComponent = (props: RouteComponentProps) => {
    * 渲染检索步骤
    */
   const renderSearchSteps = () => {
-    if (state.saveOrderBtn.language.saved) {
+    // if (state.saveOrderBtn.language.saved) {
+    if(isSaved){
       return (
         <div>
           <div className={styles.ExamBox}>
@@ -948,7 +1095,7 @@ const LanguageExperimentComponent = (props: RouteComponentProps) => {
       <Button
         type="primary"
         loading={nextLoading}
-        disabled={lastStepIndex !== 4}
+        disabled={!isSaved}
         onClick={goNextExperiment}
         className={styles.NextBtn}>
         下一步
