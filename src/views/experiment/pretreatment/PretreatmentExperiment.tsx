@@ -18,6 +18,8 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
   const dispatch: Dispatch<Actions> = useDispatch()
   // 当前的模式，学习或是考核
   const isStudy=getLocalStore('modal')=='0'
+  // 判断是否是回退
+  var isSaved0=false
   // docId
   var docId0=1
   // originalArticle
@@ -51,6 +53,10 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
       if(getLocalStore('StudyPretreatment')['isRemoveStopWord']!=null){
         isRemoveStopWord0=getLocalStore('StudyPretreatment')['isRemoveStopWord']
       }
+      // 是否是回退
+      if(getLocalStore('StudyPretreatment')['isSaved']!=null){
+        isSaved0=getLocalStore('StudyPretreatment')['isSaved']
+      }
     }
   }else{
     if(getLocalStore('ExamPretreatment')!=null){
@@ -74,10 +80,15 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
       if(getLocalStore('ExamPretreatment')['isRemoveStopWord']!=null){
         isRemoveStopWord0=getLocalStore('ExamPretreatment')['isRemoveStopWord']
       }
+      // 是否是回退
+      if(getLocalStore('ExamPretreatment')['isSaved']!=null){
+        isSaved0=getLocalStore('ExamPretreatment')['isSaved']
+      }
     }
   }
   
-
+  // 判断是否已经实验过只是回退
+  const [isSaved,setIsSaved]=useState(isSaved0)
   const [docId, setDocId] = useState(docId0)
   const [originalArticle, setOriginalArticle] = useState(originalArticle0)
   const [analyzerName, setAnalyzerName] = useState(analyzerName0)
@@ -247,6 +258,7 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
       if (res.data.push) {
         setSegmentResult(res.data.join(' '))
         updatePreProcessScore()
+        setIsSaved(true)
       }
       if(isStudy){
         var localData=getLocalStore('StudyPretreatment')!=null?getLocalStore('StudyPretreatment'):{}
@@ -290,6 +302,15 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
    * 点击底部下一步按钮
    */
   const handleClick = async () => {
+    if(isStudy){
+      var localData=getLocalStore('StudyPretreatment')!=null?getLocalStore('StudyPretreatment'):{}
+      localData['isSaved']=true
+      setLocalStore('StudyPretreatment',localData)
+    }else{
+      var localData=getLocalStore('ExamPretreatment')!=null?getLocalStore('ExamPretreatment'):{}
+      localData['isSaved']=true
+      setLocalStore('ExamPretreatment',localData)
+    }
     const res_1 = await requestFn(dispatch, {
       url: '/score/updateSubScore',
       method: 'post',
@@ -364,8 +385,7 @@ const PretreatmentExperimentComponent = (props: RouteComponentProps) => {
           className={styles.NextBtn}
           type="primary"
           onClick={handleClick}
-          // disabled={saveStepIndex < 1 || !preProcessed}>
-          >
+          disabled={!isSaved}>
           下一步
         </Button>
       </div>

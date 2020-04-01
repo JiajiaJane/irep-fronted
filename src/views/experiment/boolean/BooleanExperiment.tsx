@@ -8,6 +8,7 @@ import Arrow from '../../../assets/experiment/vectorSpace/arrow.png'
 import { useDispatch, useMappedState, State, ExperimentCard } from '../../../store/Store'
 import { Actions } from '../../../store/Actions'
 import { requestFn } from '../../../utils/request'
+import { setLocalStore, getLocalStore } from '../../../utils/util'
 
 const { Option } = Select
 
@@ -70,31 +71,109 @@ const defaultPreProcessQuery: PreProcessQuery = {
   result: ''
 }
 
+
 const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
   const dispatch: Dispatch<Actions> = useDispatch()
   const state: State = useMappedState(useCallback((globalState: State) => globalState, []))
+  // 判断学习模式或是考试模式
+  const isStudy=getLocalStore('modal')=='0'
+  var searchTerms0=defaultSearchTerms
+  var searchOperators0=defaultOperators
+  var PreProcessQueryResult0=defaultPreProcessQuery
+  var BoolVectorResult0=[]
+  var CallBackResult0=[]
+  var BooleanOperation0=[]
+  var SearchResult0=[]
+  var isSaved0=false
+  var query0=''
+  if(isStudy){
+    if(getLocalStore('StudyBoolean')!=null){
+      if(getLocalStore('StudyBoolean')['searchTerms']!=null){
+        searchTerms0=getLocalStore('StudyBoolean')['searchTerms']
+      }
+      if(getLocalStore('StudyBoolean')['searchOperators']!=null){
+        searchOperators0=getLocalStore('StudyBoolean')['searchOperators']
+      }
+      if(getLocalStore('StudyBoolean')['PreProcessQueryResult']!=null){
+        PreProcessQueryResult0=getLocalStore('StudyBoolean')['PreProcessQueryResult']
+      }
+      if(getLocalStore('StudyBoolean')['BoolVectorResult']!=null){
+        BoolVectorResult0=getLocalStore('StudyBoolean')['BoolVectorResult']
+      }
+      if(getLocalStore('StudyBoolean')['CallBackResult']!=null){
+        CallBackResult0=getLocalStore('StudyBoolean')['CallBackResult']
+      }
+      if(getLocalStore('StudyBoolean')['BooleanOperation']!=null){
+        BooleanOperation0=getLocalStore('StudyBoolean')['BooleanOperation']
+      }
+      if(getLocalStore('StudyBoolean')['SearchResult']!=null){
+        SearchResult0=getLocalStore('StudyBoolean')['SearchResult']
+      }
+      if(getLocalStore('StudyBoolean')['isSaved']!=null){
+        isSaved0=getLocalStore('StudyBoolean')['isSaved']
+      }
+      if(getLocalStore('StudyBoolean')['query']!=null){
+        query0=getLocalStore('StudyBoolean')['query']
+      }
+    }
+  }else{
+    if(getLocalStore('ExamBoolean')!=null){
+      if(getLocalStore('ExamBoolean')['searchTerms']!=null){
+        searchTerms0=getLocalStore('ExamBoolean')['searchTerms']
+      }
+      if(getLocalStore('ExamBoolean')['searchOperators']!=null){
+        searchOperators0=getLocalStore('ExamBoolean')['searchOperators']
+      }
+      if(getLocalStore('ExamBoolean')['PreProcessQueryResult']!=null){
+        PreProcessQueryResult0=getLocalStore('ExamBoolean')['PreProcessQueryResult']
+      }
+      if(getLocalStore('ExamBoolean')[' BoolVectorResult']!=null){
+        BoolVectorResult0=getLocalStore('ExamBoolean')['BoolVectorResult']
+      }
+      if(getLocalStore('ExamBoolean')['CallBackResult']!=null){
+        CallBackResult0=getLocalStore('ExamBoolean')['CallBackResult']
+      }
+      if(getLocalStore('ExamBoolean')['BooleanOperation']!=null){
+        BooleanOperation0=getLocalStore('ExamBoolean')['BooleanOperation']
+      }
+      if(getLocalStore('ExamBoolean')['SearchResult']!=null){
+        SearchResult0=getLocalStore('ExamBoolean')['SearchResult']
+      }
+      if(getLocalStore('ExamBoolean')['isSaved']!=null){
+        isSaved0=getLocalStore('ExamBoolean')['isSaved']
+      }
+      if(getLocalStore('ExamBoolean')['query']!=null){
+        query0=getLocalStore('ExamBoolean')['query']
+      }
+    }
+  }
+ 
+  // 判断是否已经实验过只是回退
+  const [isSaved,setIsSaved]=useState(isSaved0)
   // 保存顺序加载状态
   const [saveOrderLoading, setSaveOrderLoading] = useState(false)
   // 仿真我的搜索引擎，输入框中的值
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(query0)
   const [searchLoading, setSearchLoading] = useState(false)
   // 仿真我的搜索引擎步骤索引
-  const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const [currentStepIndex, setCurrentStepIndex] = useState(isSaved?4:0)
   const [lastStepIndex, setLastStepIndex] = useState(0)
   // 仿真我的搜索引擎，每一步的请求loading状态
   const [stepLoading, setStepLoading] = useState(false)
-  const [searchTerms, setSearchTerms] = useState(defaultSearchTerms)
-  const [searchOperators, setSearchOperators] = useState<Operator[]>(defaultOperators)
+  const [searchTerms, setSearchTerms] = useState(searchTerms0)
+  const [searchOperators, setSearchOperators] = useState<Operator[]>(searchOperators0)
   // 查询预处理结果
-  const [preProcessQueryResult, setPreProcessQueryResult] = useState<PreProcessQuery>(defaultPreProcessQuery)
+  const [preProcessQueryResult, setPreProcessQueryResult] = useState<PreProcessQuery>(PreProcessQueryResult0)
   // 计算布尔向量结果
-  const [boolVectorResult, setBoolVectorResult] = useState<BoolVector[]>([])
+  const [boolVectorResult, setBoolVectorResult] = useState<BoolVector[]>(BoolVectorResult0)
   // 运行布尔运算结果
-  const [booleanOperationResult, setBooleanOperationResult] = useState<BooleanOperation[]>([])
+  const [booleanOperationResult, setBooleanOperationResult] = useState<BooleanOperation[]>(BooleanOperation0)
   // 召回目标文档结果
-  const [callBackResult, setCallBackResult] = useState<CallBackResult[]>([])
+  const [callBackResult, setCallBackResult] = useState<CallBackResult[]>(CallBackResult0)
   // 检索结果
-  const [searchResult, setSearchResult] = useState<SearchResult[]>([])
+  const [searchResult, setSearchResult] = useState<SearchResult[]>(SearchResult0)
+  
+
   const [nextLoading, setNextLoading] = useState(false)
 
   const { getFieldDecorator, validateFields, getFieldsValue } = props.form
@@ -113,6 +192,7 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
     if (res && res.status === 200 && res.data && res.data.code === 0) {
       successTips('保存顺序成功', '')
       updateSaveOrderBtnStatus()
+      setIsSaved(true)
     } else {
       errorTips('保存顺序失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
@@ -307,6 +387,34 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
     validateFields((err: any) => {
       if (!err) {
         const fieldValue = getFieldsValue()
+        var storesearchTerms=[]
+        var storesearchOperators=[]
+        for(var i in fieldValue){
+          if(i.indexOf("terms_")!=-1){
+            storesearchTerms.push(fieldValue[i])
+            if(isStudy){
+              var localData=getLocalStore('StudyBoolean')!=null?getLocalStore('StudyBoolean'):{}
+              localData['searchTerms']=storesearchTerms
+              setLocalStore('StudyBoolean',localData)
+            }else{
+              var localData=getLocalStore('ExamBoolean')!=null?getLocalStore('ExamBoolean'):{}
+              localData['searchTerms']=storesearchTerms
+              setLocalStore('ExamBoolean',localData)
+            }
+          }
+          else if(i.indexOf("operator_")!=-1){
+            storesearchOperators.push(fieldValue[i])
+            if(isStudy){
+              var localData=getLocalStore('StudyBoolean')!=null?getLocalStore('StudyBoolean'):{}
+              localData['searchOperators']=storesearchOperators
+              setLocalStore('StudyBoolean',localData)
+            }else{
+              var localData=getLocalStore('ExamBoolean')!=null?getLocalStore('ExamBoolean'):{}
+              localData['searchOperators']=storesearchOperators
+              setLocalStore('ExamBoolean',localData)
+            }
+          }
+        }
         const queryString = handleSearchQuery(fieldValue)
         setQuery(queryString)
         searchQuery(queryString)
@@ -389,6 +497,15 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
   ) => {
     if (operationName === '仿真倒排索引表') {
       setSearchResult(data as SearchResult[])
+      if(isStudy){
+        var localData=getLocalStore('StudyBoolean')!=null?getLocalStore('StudyBoolean'):{}
+        localData['SearchResult']=data as SearchResult[]
+        setLocalStore('StudyBoolean',localData)
+      }else{
+        var localData=getLocalStore('ExamBoolean')!=null?getLocalStore('ExamBoolean'):{}
+        localData['SearchResult']=data as SearchResult[]
+        setLocalStore('ExamBoolean',localData)
+      }
       setCurrentStepIndex(0)
       setSearchLoading(false)
     } else {
@@ -424,7 +541,8 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
           {renderSelectItem(index)}
           <Form.Item className={`${styles.FormItem}`}>
             {getFieldDecorator(`terms_${index}`, {
-              rules: [{ required: true, message: '请输入检索关键词' }]
+            initialValue: searchTerms[index],
+            rules: [{ required: true, message: '请输入检索关键词' }]
             })(<Input autoComplete="off" size="large" />)}
           </Form.Item>
           {renderSearchBtn(index === searchTerms.length - 1)}
@@ -458,7 +576,7 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
       return (
         <Form.Item className={`${styles.FormItem}`}>
           {getFieldDecorator(`operator_${index - 1}`, {
-            initialValue: 'OR'
+            initialValue: searchOperators[index-1]
           })(
             <Select className={styles.SearchSelect} size="large">
               <Option value="AND">and</Option>
@@ -527,15 +645,51 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
         break
       case 1:
         setBoolVectorResult(result as BoolVector[])
+        if(isStudy){
+          var localData=getLocalStore('StudyBoolean')!=null?getLocalStore('StudyBoolean'):{}
+          localData['BoolVectorResult']=result as BoolVector[]
+          setLocalStore('StudyBoolean',localData)
+        }else{
+          var localData=getLocalStore('ExamBoolean')!=null?getLocalStore('ExamBoolean'):{}
+          localData['BoolVectorResult']=result as BoolVector[]
+          setLocalStore('ExamBoolean',localData)
+        }
         break
       case 2:
         setBooleanOperationResult(result as BooleanOperation[])
+        if(isStudy){
+          var localData=getLocalStore('StudyBoolean')!=null?getLocalStore('StudyBoolean'):{}
+          localData['BooleanOperationResult']=result as BooleanOperation[]
+          setLocalStore('StudyBoolean',localData)
+        }else{
+          var localData=getLocalStore('ExamBoolean')!=null?getLocalStore('ExamBoolean'):{}
+          localData['BooleanOperationResult']=result as BooleanOperation[]
+          setLocalStore('ExamBoolean',localData)
+        }
         break
       case 3:
         setCallBackResult(result as CallBackResult[])
+        if(isStudy){
+          var localData=getLocalStore('StudyBoolean')!=null?getLocalStore('StudyBoolean'):{}
+          localData['CallBackResult']=result as CallBackResult[]
+          setLocalStore('StudyBoolean',localData)
+        }else{
+          var localData=getLocalStore('ExamBoolean')!=null?getLocalStore('ExamBoolean'):{}
+          localData['CallBackResult']=result as CallBackResult[]
+          setLocalStore('ExamBoolean',localData)
+        }
         break
       default:
         setPreProcessQueryResult(result as PreProcessQuery)
+        if(isStudy){
+          var localData=getLocalStore('StudyBoolean')!=null?getLocalStore('StudyBoolean'):{}
+          localData['PreProcessQueryResult']=result as PreProcessQuery
+          setLocalStore('StudyBoolean',localData)
+        }else{
+          var localData=getLocalStore('ExamBoolean')!=null?getLocalStore('ExamBoolean'):{}
+          localData['PreProcessQuery']=result as PreProcessQuery
+          setLocalStore('ExamBoolean',localData)
+        }
         break
     }
   }
@@ -582,7 +736,9 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
 
   /** 渲染检索步骤 */
   const renderSearchSteps = () => {
-    if (state.saveOrderBtn.bool.saved) {
+    // if (state.saveOrderBtn.bool.saved) {
+    // 判断是否保存过
+    if (isSaved) {
       return (
         <div>
           <div className={styles.ExamBox}>
@@ -780,6 +936,17 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
   /** 页面底部，点击前往下一步 */
   const goNextExperiment = async () => {
     setNextLoading(true)
+    if(isStudy){
+      var localData=getLocalStore('StudyBoolean')!=null?getLocalStore('StudyBoolean'):{}
+      localData['isSaved']=true
+      localData['query']=query
+      setLocalStore('StudyBoolean',localData)
+    }else{
+      var localData=getLocalStore('ExamBoolean')!=null?getLocalStore('ExamBoolean'):{}
+      localData['isSaved']=true
+      localData['query']=query
+      setLocalStore('ExamBoolean',localData)
+    }
     const res_1 = await requestFn(dispatch, {
       url: '/score/updateSubScore',
       method: 'post',
@@ -826,7 +993,7 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
       <Button
         type="primary"
         loading={nextLoading}
-        disabled={lastStepIndex !== 4}
+        disabled={!isSaved}
         onClick={goNextExperiment}
         className={styles.NextBtn}>
         下一步
