@@ -192,6 +192,15 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
     if (res && res.status === 200 && res.data && res.data.code === 0) {
       successTips('保存顺序成功', '')
       updateSaveOrderBtnStatus()
+      if(isStudy){
+        var localData=getLocalStore('StudyBoolean')!=null?getLocalStore('StudyBoolean'):{}
+        localData['isSaved']=true
+        setLocalStore('StudyBoolean',localData)
+      }else{
+        var localData=getLocalStore('ExamBoolean')!=null?getLocalStore('ExamBoolean'):{}
+        localData['isSaved']=true
+        setLocalStore('ExamBoolean',localData)
+      }
       setIsSaved(true)
     } else {
       errorTips('保存顺序失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
@@ -417,6 +426,15 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
         }
         const queryString = handleSearchQuery(fieldValue)
         setQuery(queryString)
+        if(isStudy){
+          var localData=getLocalStore('StudyBoolean')!=null?getLocalStore('StudyBoolean'):{}
+          localData['query']=queryString
+          setLocalStore('StudyBoolean',localData)
+        }else{
+          var localData=getLocalStore('ExamBoolean')!=null?getLocalStore('ExamBoolean'):{}
+          localData['query']=queryString
+          setLocalStore('ExamBoolean',localData)
+        }
         searchQuery(queryString)
       }
     })
@@ -596,7 +614,7 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
         <Button
           type="primary"
           size="large"
-          disabled={!state.saveOrderBtn.bool.saved}
+          disabled={!isSaved}
           loading={searchLoading}
           className={styles.SearchFormBtn}
           onClick={beforeSearch}>
@@ -936,44 +954,38 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
   /** 页面底部，点击前往下一步 */
   const goNextExperiment = async () => {
     setNextLoading(true)
-    if(isStudy){
-      var localData=getLocalStore('StudyBoolean')!=null?getLocalStore('StudyBoolean'):{}
-      localData['isSaved']=true
-      localData['query']=query
-      setLocalStore('StudyBoolean',localData)
-    }else{
-      var localData=getLocalStore('ExamBoolean')!=null?getLocalStore('ExamBoolean'):{}
-      localData['isSaved']=true
-      localData['query']=query
-      setLocalStore('ExamBoolean',localData)
-    }
-    const res_1 = await requestFn(dispatch, {
-      url: '/score/updateSubScore',
-      method: 'post',
-      params: {
-        experimentId: 4,
-      }
-    })
-    setNextLoading(false)
-    if(res_1 && res_1.status === 200 && res_1.data && res_1.data.code === 0){
-      successTips('子实验分数保存成功', '')
-      setNextLoading(true)
-      const res = await requestFn(dispatch, {
-        url: '/IRforCN/Retrieval/boolModel/quit',
+    if(!isSaved){
+      const res_1 = await requestFn(dispatch, {
+        url: '/score/updateSubScore',
         method: 'post',
-        data: {
-          query
+        params: {
+          experimentId: 4,
         }
       })
       setNextLoading(false)
-      if (res && res.status === 200 && res.data && res.data.code === 0) {
-        successTips('保存实验操作成功', '')
-        props.history.replace('/experiment/vectorSpace')
-      } else {
-        errorTips('保存实验操作失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
-      }
-    }else{
-      errorTips("子实验分数保存失败", res_1 && res_1.data && res_1.data.msg ? res_1.data.msg : '请求错误，请重试！')
+      if(res_1 && res_1.status === 200 && res_1.data && res_1.data.code === 0){
+        successTips('子实验分数保存成功', '')
+        setNextLoading(true)
+        const res = await requestFn(dispatch, {
+          url: '/IRforCN/Retrieval/boolModel/quit',
+          method: 'post',
+          data: {
+            query
+          }
+        })
+        setNextLoading(false)
+        if (res && res.status === 200 && res.data && res.data.code === 0) {
+          successTips('保存实验操作成功', '')
+          props.history.replace('/experiment/vectorSpace')
+        } else {
+          errorTips('保存实验操作失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
+        }
+      }else{
+        errorTips("子实验分数保存失败", res_1 && res_1.data && res_1.data.msg ? res_1.data.msg : '请求错误，请重试！')
+      }}
+    else{
+      setNextLoading(false)
+      props.history.replace('/experiment/vectorSpace')
     }
   }
 

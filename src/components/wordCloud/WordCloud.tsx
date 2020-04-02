@@ -190,7 +190,7 @@ const WordCloudComponent = (props: WordCloudProps) => {
    */
   const renderWordColud = () => {
     if (wordClouds.length === 0) {
-      return <div className={styles.Tips}>请点击分析按钮，生成词云</div>
+      return <div className={styles.Tips}>词云图生成需要时间，请点击分析按钮，生成词云</div>
     } else {
       return (
         <ReactWordCloud
