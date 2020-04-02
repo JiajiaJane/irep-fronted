@@ -19,11 +19,25 @@ const defaultTab = getUrlParam('tab')
  * 预处理实验
  */
 const PretreatmentComponet = (props: RouteComponentProps) => {
-  const [tabDisabled0, setTabDisabled0] = useState(getLocalStore('modal') == '0') //学习状态为0
+  const [tabDisabled0,settabDisabled0 ]= useState(getLocalStore('modal') == '0') //学习状态为0
+  var isSaved0=false
+  if(tabDisabled0){
+    if(getLocalStore('Studypretreatment')!=null){
+      if(getLocalStore('Studypretreatment')['isSaved']){
+        isSaved0=getLocalStore('Studypretreatment')['isSaved']
+      }
+    }
+  }else{
+    if(getLocalStore('Exampretreatment')!=null){
+      if(getLocalStore('Exampretreatment')['isSaved']){
+        isSaved0=getLocalStore('Exampretreatment')['isSaved']
+      }
+    }
+  }
   const [activeTabKey, setActiveTabKey] = useState(defaultTab || tabDisabled0 ? '1' : '2')
   const [tabDisabled, setTabDisabled] = useState(defaultTab !== '3')
   const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
-
+  const [isSaved,setIsSaved]=useState(isSaved0)
   
 
   /**
@@ -84,7 +98,7 @@ const PretreatmentComponet = (props: RouteComponentProps) => {
       <Button className={styles.controlButton} onClick={lastStep}>
         上一步
       </Button>
-      <Button className={styles.controlButton} onClick={nextStep} hidden={!tabDisabled0}>
+      <Button className={styles.controlButton} onClick={nextStep} hidden={!tabDisabled0&&!isSaved}>
         下一步
       </Button>
     </div>

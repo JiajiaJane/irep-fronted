@@ -225,6 +225,7 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
   const state: State = useMappedState(useCallback((globalState: State) => globalState, []))
   // 当前的模式，学习或是考核
   const isStudy=getLocalStore('modal')=='0'
+  var isSaved0=false
   var InvertedAnswer=defaultInvertedAnswer
   var  finalFullIndexData=[]
   var OriginDoc0=defaultOriginDoc
@@ -247,6 +248,10 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
       if(getLocalStore('StudyInvertedIndex')['finalDocs']!=null){
         finalDocs=getLocalStore('StudyInvertedIndex')['finalDocs']
       }
+      // 是否是回退
+      if(getLocalStore('StudyInvertedIndex')['isSaved']!=null){
+        isSaved0=getLocalStore('StudyInvertedIndex')['isSaved']
+      }
     }
   }else{
     if(getLocalStore('ExamInvertedIndex')!=null){
@@ -265,10 +270,15 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
       if(getLocalStore('ExamInvertedIndex')['finalDocs']!=null){
         finalDocs=getLocalStore('ExamInvertedIndex')['finalDocs']
       }
+      // 是否回退
+      if(getLocalStore('ExamInvertedIndex')['isSaved']!=null){
+        isSaved0=getLocalStore('ExamInvertedIndex')['isSaved']
+      }
     }
   }
   // 当前选中的词项
   const [currentTerm, setCurrentTerm] = useState<FullIndex>()
+  const [isSaved,setIsSaved]=useState(isSaved0)
   // 当前选中词项下面的某一条文档id记录
   const [currentDoc, setCurrentDoc] = useState<InvertedIndex>()
   const [fullIndexLoading, setFullIndexLoading] = useState(false)
@@ -410,6 +420,16 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
       setCurrentDoc(undefined)
       setCurrentTerm(undefined)
       setOriginDoc(defaultOriginDoc)
+      setIsSaved(true)
+      if(isStudy){
+        var localData=getLocalStore('StudyInvertedIndex')!=null?getLocalStore('StudyInvertedIndex'):{}
+        localData['isSaved']=true
+        setLocalStore('StudyInvertedIndex',localData)
+      }else{
+        var localData=getLocalStore('ExamInvertedIndex')!=null?getLocalStore('ExamInvertedIndex'):{}
+        localData['isSaved']=true
+        setLocalStore('ExamInvertedIndex',localData)
+      }
     } else {
       errorTips('构建我的倒排索引表失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
@@ -1122,7 +1142,7 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
           <div className={styles.OriginDoc}>{originDoc.content}</div>
         </Spin>
       </div>
-      <Button className={styles.NextStep} type="primary" onClick={handleClick}>
+      <Button className={styles.NextStep} type="primary" onClick={handleClick} disabled={!isSaved}>
         下一步
       </Button>
     </div>

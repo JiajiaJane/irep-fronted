@@ -29,6 +29,22 @@ const InvertedIndexComponent = (props: RouteComponentProps) => {
   const dispatch: Dispatch<Actions> = useDispatch()
   const state: State = useMappedState(useCallback((globalState: State) => globalState, []))
   const [buttonDisabled, setbuttonDisabled] = useState(!getStore('zhuanjia'))
+  var isSaved0=false
+  if(tabDisabled0){
+    if(getLocalStore('StudyInvertedIndex')!=null){
+      if(getLocalStore('StudyInvertedIndex')['isSaved']){
+        isSaved0=getLocalStore('StudyInvertedIndex')['isSaved']
+      }
+    }
+  }else{
+    if(getLocalStore('StudyInvertedIndex')!=null){
+      if(getLocalStore('StudyInvertedIndex')['isSaved']){
+        isSaved0=getLocalStore('StudyInvertedIndex')['isSaved']
+      }
+    }
+  }
+
+  console.log(isSaved0)
 
   useEffect(() => {
     /**
@@ -135,7 +151,7 @@ const InvertedIndexComponent = (props: RouteComponentProps) => {
 }
 
 const nextStep= () => {
-  answerTips('构建检索模型之前，应先完成倒排索引表的构建，否则后续实验会出错' )
+  // answerTips('构建检索模型之前，应先完成倒排索引表的构建，否则后续实验会出错' )
     props.history.replace('/experiment/boolean')
   }
 
@@ -144,7 +160,7 @@ const nextStep= () => {
       <Button className={styles.controlButton} onClick={lastStep}>
         上一步
       </Button>
-      <Button className={styles.controlButton} onClick={nextStep} hidden={!tabDisabled0}>
+      <Button className={styles.controlButton} onClick={nextStep} hidden={!tabDisabled0 && !isSaved0}>
         下一步
       </Button>
     </div>

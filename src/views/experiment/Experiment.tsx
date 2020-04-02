@@ -3,7 +3,7 @@ import { Dispatch } from 'redux'
 import { withRouter, RouteComponentProps } from 'react-router'
 import { Button, Icon, notification, Modal } from 'antd'
 import styles from './Experiment.module.less'
-import { setStore, getStore, setLocalStore } from '../../utils/util'
+import { setStore, getStore, setLocalStore, removeLocalStore } from '../../utils/util'
 import { requestFn } from '../../utils/request'
 import { Actions } from '../../store/Actions'
 import { useDispatch } from '../../store/Store'
@@ -12,6 +12,11 @@ import Title from 'antd/lib/skeleton/Title'
 /** 实验入口页 */
 const ExperimentComponent = (props: RouteComponentProps) => {
   const [nextLoading, setNextLoading] = useState(false)
+  // 弹窗显示与无
+  const [modalVisible,setModalVisible]=useState(false)
+  const dispatch: Dispatch<Actions> = useDispatch()
+  // 选择学习模式还是考核模式，学习模式为0，考核模式为1
+  const[modal,setModal]=useState('0')
 
   /**
    * 错误提示
@@ -24,12 +29,10 @@ const ExperimentComponent = (props: RouteComponentProps) => {
   }
 
   // 考试模式
-  const handleClick = async () => {
-    alert("进入考核模式后，中途不可退出")
-    // 存开始时间
-    setStore('startDate', new Date().getTime())
-    props.history.replace('/experiment/entry')
+  const handleClick =() => {
+    setModal('1')
     setLocalStore("modal",'1')
+    setModalVisible(true)
     // setNextLoading(true)
     // const res = await requestFn(dispatch, {
     //   url: '/platform/sendData',
@@ -52,19 +55,58 @@ const ExperimentComponent = (props: RouteComponentProps) => {
   }
 
   // 学习模式
-  const handleClick0 = async () => {
+  const handleClick0 =() => {
+    setModal('0')
+    setLocalStore("modal",'0')
+    setModalVisible(true)
+  }
+
+  
+
+  const OkClick=async()=>{
     // 存开始时间
     setStore('startDate', new Date().getTime())
     props.history.replace('/experiment/entry')
-    // 学习模式存0，考试模式存1
-    setLocalStore("modal",'0')
   }
 
-  const dispatch: Dispatch<Actions> = useDispatch()
+  const CancelClick=()=>{
+    if(modal=='1'){
+      setModalVisible(false)
+    }
+    if(modal=='0'){
+      removeLocalStore('StudyPretreatment')
+      removeLocalStore('StudyInvertedIndex')
+      removeLocalStore('studyAnswer1')
+      removeLocalStore('studyAnswer2')
+      props.history.replace('/experiment/entry')
+    }
+  }
 
   return (
     <div className={styles.Container}>
       <div className={styles.Content}>
+        <div>
+          <Modal
+            title="20px to Top"
+            style={{ top: 20 }}
+            visible={modalVisible}
+            onOk={OkClick}
+            onCancel={CancelClick}
+            footer={[
+              <Button key="back" onClick={CancelClick}>
+                否
+              </Button>,
+              <Button key="submit" type="primary" onClick={OkClick}>
+                确定
+              </Button>,
+            ]}
+          >
+            {/* 此时弹窗显示考核模式下的提醒 */}
+            <p hidden={modal=='0'}>进入考核模式后，中途不可退出。是否确认进入考核模式</p>
+            {/* 显示学习模式下的提醒 */}
+            <p hidden={modal=='1'}>是否在上次的实验基础上进行实验</p>
+          </Modal>
+        </div>
         <h1 className={styles.heading}>网络大数据搜索引擎虚拟仿真实验</h1>
         <div className={styles.line}></div>
         <h2 className={styles.subHeading}>准确理解搜索引擎</h2>

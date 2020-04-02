@@ -100,7 +100,7 @@ const ExamForm = (props: ExamFormProps) => {
         }
       }, 1000)
     } else {
-      console.log(...answer)
+      // console.log(...answer)
       setLoading(false)
       errorTips('保存答案失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
