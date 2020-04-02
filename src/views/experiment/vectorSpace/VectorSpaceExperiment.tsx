@@ -11,6 +11,7 @@ import { requestFn } from '../../../utils/request'
 import { vectorSpaceQueryOptions } from '../../../config/Constant'
 import { StandardResult } from '../../../modal/VectorSpace'
 import { getStore } from '../../../utils/util'
+import { setLocalStore, getLocalStore } from '../../../utils/util'
 import {
   SearchResult,
   IdfResult,
@@ -178,21 +179,68 @@ const formulas = [
 const { Option } = Select
 
 const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
+  // 判断学习模式或是考试模式
+  const isStudy = getLocalStore('modal') == '0'
+  var isSaved0 = false
+  var query0 = '' //仿真我的搜索引擎输入框中的值
+  var selectedQuery0 = '' //请对模型进行调试中的选项值
+  var smoothParam0 = 0.5 //请选择我的TF模型中的平滑系数
+  var formulaId0 = 1 //请选择我的TF模型中的选项id
+  var searchQuerySimilarityResult0 = []
+  if (isStudy) {
+    if (getLocalStore('StudyVector') != null) {
+      if (getLocalStore('StudyVector')['query'] != null) {
+        query0 = getLocalStore('StudyVector')['query']
+      }
+      if (getLocalStore('StudyVector')['selectedQuery'] != null) {
+        selectedQuery0 = getLocalStore('StudyVector')['selectedQuery']
+      }
+      if (getLocalStore('StudyVector')['smoothParam'] != null) {
+        smoothParam0 = getLocalStore('StudyVector')['smoothParam']
+      }
+      if (getLocalStore('StudyVector')['formulaId'] != null) {
+        formulaId0 = getLocalStore('StudyVector')['formulaId']
+      }
+      if (getLocalStore('StudyVector')['searchQuerySimilarityResult'] != null) {
+        searchQuerySimilarityResult0 = getLocalStore('StudyVector')['searchQuerySimilarityResult']
+      }
+    }
+  } else {
+    if (getLocalStore('ExamVector') != null) {
+      if (getLocalStore('ExamVector')['query'] != null) {
+        query0 = getLocalStore('ExamVector')['query']
+      }
+      if (getLocalStore('ExamVector')['selectedQuery'] != null) {
+        selectedQuery0 = getLocalStore('ExamVector')['selectedQuery']
+      }
+      if (getLocalStore('ExamVector')['smoothParam'] != null) {
+        smoothParam0 = getLocalStore('ExamVector')['smoothParam']
+      }
+      if (getLocalStore('ExamVector')['formulaId'] != null) {
+        formulaId0 = getLocalStore('ExamVector')['formulaId']
+      }
+      if (getLocalStore('ExamVector')['searchQuerySimilarityResult'] != null) {
+        searchQuerySimilarityResult0 = getLocalStore('ExamVector')['searchQuerySimilarityResult']
+      }
+    }
+  }
+  // 判断是否已经实验过只是回退
+  const [isSaved, setIsSaved] = useState(isSaved0)
   const dispatch: Dispatch<Actions> = useDispatch()
   const state: State = useMappedState(useCallback((globalState: State) => globalState, []))
   // 保存顺序加载状态
   const [saveOrderLoading, setSaveOrderLoading] = useState(false)
   // 仿真我的搜索引擎，输入框中的值
-  const [query, setQuery] = useState('')
-  const [selectedQuery, setSelectedQuery] = useState('')
+  const [query, setQuery] = useState(query0)
+  const [selectedQuery, setSelectedQuery] = useState(selectedQuery0)
   const [searchLoading, setSearchLoading] = useState(false)
   const [calculationLoading, setCalculationLoading] = useState(false)
-  const [formulaId, setFormulaId] = useState(1)
-  const [smoothParam, setSmoothParam] = useState(0.5)
+  const [formulaId, setFormulaId] = useState(formulaId0)
+  const [smoothParam, setSmoothParam] = useState(smoothParam0)
   // 仿真我的搜索引擎，每一步的请求loading状态
   const [stepLoading, setStepLoading] = useState(false)
   // 仿真我的搜索引擎步骤索引
-  const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const [currentStepIndex, setCurrentStepIndex] = useState(isSaved ? 7 : 0)
   const [lastStepIndex, setLastStepIndex] = useState(0)
   const [standardData, setStandardData] = useState<StandardResult[]>([])
   const [testData, setTestData] = useState<StandardResult[]>([])
@@ -211,7 +259,9 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
   // 求文档向量结果
   const [searchQueryDocVectorResult, setSearchQueryDocVectorResult] = useState<QueryDocVectorResult>()
   // 求相似度及相似度降序排序的结果
-  const [searchQuerySimilarityResult, setSearchQuerySimilarityResult] = useState<QuerySimilarityResult[]>([])
+  const [searchQuerySimilarityResult, setSearchQuerySimilarityResult] = useState<QuerySimilarityResult[]>(
+    searchQuerySimilarityResult0
+  )
   const [nextLoading, setNextLoading] = useState(false)
 
   /**
@@ -381,11 +431,11 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
       url: '/score/updateSubScore',
       method: 'post',
       params: {
-        experimentId: 5,
+        experimentId: 5
       }
     })
     setNextLoading(false)
-    if(res_1 && res_1.status === 200 && res_1.data && res_1.data.code === 0){
+    if (res_1 && res_1.status === 200 && res_1.data && res_1.data.code === 0) {
       successTips('子实验分数保存成功', '')
       setNextLoading(true)
       const res = await requestFn(dispatch, {
@@ -404,8 +454,8 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
       } else {
         errorTips('保存实验操作失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
       }
-    }else{
-      errorTips("子实验分数保存失败",res_1 && res_1.data && res_1.data.msg ? res_1.data.msg : '请求错误，请重试！')
+    } else {
+      errorTips('子实验分数保存失败', res_1 && res_1.data && res_1.data.msg ? res_1.data.msg : '请求错误，请重试！')
     }
   }
 
@@ -414,6 +464,15 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
    */
   const onInputNumberChange = (value: number | undefined) => {
     setSmoothParam(value || 0.5)
+    if (isStudy) {
+      var localData = getLocalStore('StudyVector') != null ? getLocalStore('StudyVector') : {}
+      localData['smoothParam'] = value || 0.5
+      setLocalStore('StudyVector', localData)
+    } else {
+      var localData = getLocalStore('ExamVector') != null ? getLocalStore('ExamVector') : {}
+      localData['smoothParam'] = value || 0.5
+      setLocalStore('ExamVector', localData)
+    }
   }
 
   /**
@@ -421,6 +480,15 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
    */
   const selectFormulaId = (e: RadioChangeEvent) => {
     setFormulaId(e.target.value)
+    if (isStudy) {
+      var localData = getLocalStore('StudyVector') != null ? getLocalStore('StudyVector') : {}
+      localData['formulaId'] = e.target.value
+      setLocalStore('StudyVector', localData)
+    } else {
+      var localData = getLocalStore('ExamVector') != null ? getLocalStore('ExamVector') : {}
+      localData['formulaId'] = e.target.value
+      setLocalStore('ExamVector', localData)
+    }
   }
 
   /**
@@ -457,6 +525,15 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
    * 检索请求
    */
   const searchQuery = async () => {
+    if (isStudy) {
+      var localData = getLocalStore('StudyVector') != null ? getLocalStore('StudyVector') : {}
+      localData['query'] = query
+      setLocalStore('StudyVector', localData)
+    } else {
+      var localData = getLocalStore('ExamVector') != null ? getLocalStore('ExamVector') : {}
+      localData['query'] = query
+      setLocalStore('ExamVector', localData)
+    }
     setSearchLoading(true)
     const res = await requestFn(dispatch, {
       url: '/IRforCN/Retrieval/vectorSpaceModel/search',
@@ -609,9 +686,11 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
     if (res && res.status === 200 && res.data && res.data.code === 0) {
       successTips('保存顺序成功', '')
       updateSaveOrderBtnStatus()
+      setIsSaved(true)
     } else {
       // 保存顺序失败
       errorTips('保存顺序失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
+      setIsSaved(true)
     }
     setSaveOrderLoading(false)
   }
@@ -689,6 +768,15 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
         break
       case 7:
         setSearchQuerySimilarityResult(result as QuerySimilarityResult[])
+        if (isStudy) {
+          var localData = getLocalStore('StudyVector') != null ? getLocalStore('StudyVector') : {}
+          localData['searchQuerySimilarityResult'] = result as QuerySimilarityResult[]
+          setLocalStore('StudyVector', localData)
+        } else {
+          var localData = getLocalStore('ExamVector') != null ? getLocalStore('ExamVector') : {}
+          localData['searchQuerySimilarityResult'] = result as QuerySimilarityResult[]
+          setLocalStore('ExamVector', localData)
+        }
         break
       default:
         setSearchIDFResult(result as IdfResult[])
@@ -708,6 +796,15 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
    */
   const updateSelectValue = (value: string) => {
     setSelectedQuery(value)
+    if (isStudy) {
+      var localData = getLocalStore('StudyVector') != null ? getLocalStore('StudyVector') : {}
+      localData['selectedQuery'] = value
+      setLocalStore('StudyVector', localData)
+    } else {
+      var localData = getLocalStore('ExamVector') != null ? getLocalStore('ExamVector') : {}
+      localData['selectedQuery'] = value
+      setLocalStore('ExamVector', localData)
+    }
   }
 
   /**
@@ -845,7 +942,7 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
   const renderFormulaSection = () => {
     return (
       <div className={styles.FormulaWrapper} id="vectorSpaceMathJaxContent">
-        <Radio.Group name="formula" defaultValue={1} onChange={selectFormulaId}>
+        <Radio.Group name="formula" defaultValue={formulaId} onChange={selectFormulaId}>
           <Radio value={1} className={styles.Radio}>
             <span className={styles.Formula} dangerouslySetInnerHTML={{ __html: formulas[0] }}></span>
           </Radio>
@@ -864,7 +961,7 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
         </Radio.Group>
         <div className={styles.InputNumber}>
           <span>调整平滑系数a:</span>
-          <InputNumber min={0} max={1} step={0.1} defaultValue={0.5} onChange={onInputNumberChange} />
+          <InputNumber min={0} max={1} step={0.1} defaultValue={smoothParam} onChange={onInputNumberChange} />
         </div>
       </div>
     )
@@ -890,7 +987,11 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
     return (
       <div className={styles.SelectWrapper}>
         <span className={styles.SelectLabel}>请选择标准查询:</span>
-        <Select className={`GlobalSelect ${styles.Select}`} size="large" onChange={updateSelectValue}>
+        <Select
+          defaultValue={selectedQuery}
+          className={`GlobalSelect ${styles.Select}`}
+          size="large"
+          onChange={updateSelectValue}>
           {renderSelectOptions()}
         </Select>
         <Button

@@ -11,6 +11,7 @@ import Arrow from '../../../assets/experiment/vectorSpace/arrow.png'
 import { vectorSpaceQueryOptions } from '../../../config/Constant'
 import { StandardResult } from '../../../modal/VectorSpace'
 import { SearchResult, VectorSpacePreProcessQuery, QueryBIJResult, QuerySimilarityResult } from '../../../modal/Search'
+import { setLocalStore, getLocalStore } from '../../../utils/util'
 
 /**
  * 列对齐方式类型(与ant-design保持一致)
@@ -170,22 +171,69 @@ const formulas = [
 const { Option } = Select
 
 const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
+  // 判断学习模式或是考试模式
+  const isStudy = getLocalStore('modal') == '0'
+  var isSaved0 = false
+  var query0 = ''
+  var selectedQuery0 = ''
+  var k0 = 1
+  var b0 = 0.5
+  var searchSimilarityResult0 = []
+  // 判断是否已经实验过只是回退
+  const [isSaved, setIsSaved] = useState(isSaved0)
+  if (isStudy) {
+    if (getLocalStore('StudyProbability') != null) {
+      if (getLocalStore('StudyProbability')['query'] != null) {
+        query0 = getLocalStore('StudyProbability')['query']
+      }
+      if (getLocalStore('StudyProbability')['k'] != null) {
+        k0 = getLocalStore('StudyProbability')['k']
+      }
+      if (getLocalStore('StudyProbability')['b'] != null) {
+        b0 = getLocalStore('StudyProbability')['b']
+      }
+      if (getLocalStore('StudyProbability')['searchSimilarityResult'] != null) {
+        searchSimilarityResult0 = getLocalStore('StudyProbability')['searchSimilarityResult']
+      }
+      if (getLocalStore('StudyProbability')['selectedQuery'] != null) {
+        selectedQuery0 = getLocalStore('StudyProbability')['selectedQuery']
+      }
+    }
+  } else {
+    if (getLocalStore('ExamProbability') != null) {
+      if (getLocalStore('ExamProbability')['query'] != null) {
+        query0 = getLocalStore('ExamProbability')['query']
+      }
+      if (getLocalStore('ExamProbability')['k'] != null) {
+        k0 = getLocalStore('ExamProbability')['k']
+      }
+      if (getLocalStore('ExamProbability')['b'] != null) {
+        b0 = getLocalStore('ExamProbability')['b']
+      }
+      if (getLocalStore('ExamProbability')['searchSimilarityResult'] != null) {
+        searchSimilarityResult0 = getLocalStore('ExamProbability')['searchSimilarityResult']
+      }
+      if (getLocalStore('ExamProbability')['selectedQuery'] != null) {
+        selectedQuery0 = getLocalStore('ExamProbability')['selectedQuery']
+      }
+    }
+  }
   const dispatch: Dispatch<Actions> = useDispatch()
   const state: State = useMappedState(useCallback((globalState: State) => globalState, []))
   // 保存顺序加载状态
   const [saveOrderLoading, setSaveOrderLoading] = useState(false)
   //仿真我的搜索引擎输入框中的值
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(query0)
   const [searchLoading, setSearchLoading] = useState(false)
-  const [k, setK] = useState(1)
-  const [b, setB] = useState(0.5)
+  const [k, setK] = useState(k0)
+  const [b, setB] = useState(b0)
   const [calculationLoading, setCalculationLoading] = useState(false)
   // 仿真我的搜索引擎，每一步的请求loading状态
   const [stepLoading, setStepLoading] = useState(false)
   // 仿真我的搜索引擎步骤索引
-  const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const [currentStepIndex, setCurrentStepIndex] = useState(isSaved ? 3 : 0)
   const [lastStepIndex, setLastStepIndex] = useState(0)
-  const [selectedQuery, setSelectedQuery] = useState('')
+  const [selectedQuery, setSelectedQuery] = useState(selectedQuery0)
   const [standardData, setStandardData] = useState<StandardResult[]>([])
   const [testData, setTestData] = useState<StandardResult[]>([])
   // 检索结果
@@ -527,8 +575,10 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
     if (res && res.status === 200 && res.data && res.data.code === 0) {
       successTips('保存顺序成功', '')
       updateSaveOrderBtnStatus()
+      setIsSaved(true)
     } else {
       errorTips('保存顺序失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
+      setIsSaved(true)
     }
     setSaveOrderLoading(false)
   }
@@ -597,11 +647,11 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
         <div className={styles.Param}>
           <div className={styles.InputNumber}>
             <span>调整系数k:</span>
-            <InputNumber min={0} max={10} step={0.1} defaultValue={1.0} onChange={onParamKChange} />
+            <InputNumber min={0} max={10} step={0.1} defaultValue={k0} onChange={onParamKChange} />
           </div>
           <div className={styles.InputNumber}>
             <span>调整系数b:</span>
-            <InputNumber min={0} max={1} step={0.1} defaultValue={0.5} onChange={onParamBChange} />
+            <InputNumber min={0} max={1} step={0.1} defaultValue={b0} onChange={onParamBChange} />
           </div>
         </div>
       </div>
@@ -613,6 +663,15 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
    */
   const onParamKChange = debounce((value: number | undefined) => {
     setK(value || 1)
+    if (isStudy) {
+      var localData = getLocalStore('StudyProbability') != null ? getLocalStore('StudyProbability') : {}
+      localData['k'] = value || 1
+      setLocalStore('StudyProbability', localData)
+    } else {
+      var localData = getLocalStore('ExamProbability') != null ? getLocalStore('ExamProbability') : {}
+      localData['k'] = value || 1
+      setLocalStore('ExamProbability', localData)
+    }
   }, 500)
 
   /**
@@ -620,6 +679,15 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
    */
   const onParamBChange = debounce((value: number | undefined) => {
     setB(value || 0.5)
+    if (isStudy) {
+      var localData = getLocalStore('StudyProbability') != null ? getLocalStore('StudyProbability') : {}
+      localData['b'] = value || 0.5
+      setLocalStore('StudyProbability', localData)
+    } else {
+      var localData = getLocalStore('ExamProbability') != null ? getLocalStore('ExamProbability') : {}
+      localData['b'] = value || 0.5
+      setLocalStore('ExamProbability', localData)
+    }
   }, 500)
 
   /**
@@ -627,6 +695,15 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
    */
   const updateSelectValue = (value: string) => {
     setSelectedQuery(value)
+    if (isStudy) {
+      var localData = getLocalStore('StudyProbability') != null ? getLocalStore('StudyProbability') : {}
+      localData['selectedQuery'] = value
+      setLocalStore('StudyProbability', localData)
+    } else {
+      var localData = getLocalStore('ExamProbability') != null ? getLocalStore('ExamProbability') : {}
+      localData['selectedQuery'] = value
+      setLocalStore('ExamProbability', localData)
+    }
   }
 
   /**
@@ -636,7 +713,11 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
     return (
       <div className={styles.SelectWrapper}>
         <span className={styles.SelectLabel}>请选择标准查询:</span>
-        <Select className={`GlobalSelect ${styles.Select}`} size="large" onChange={updateSelectValue}>
+        <Select
+          defaultValue={selectedQuery}
+          className={`GlobalSelect ${styles.Select}`}
+          size="large"
+          onChange={updateSelectValue}>
           {renderSelectOptions()}
         </Select>
         <Button
@@ -728,6 +809,15 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
    * 检索请求
    */
   const searchQuery = async () => {
+    if (isStudy) {
+      var localData = getLocalStore('StudyProbability') != null ? getLocalStore('StudyProbability') : {}
+      localData['query'] = query
+      setLocalStore('StudyProbability', localData)
+    } else {
+      var localData = getLocalStore('ExamProbability') != null ? getLocalStore('ExamProbability') : {}
+      localData['query'] = query
+      setLocalStore('ExamProbability', localData)
+    }
     setSearchLoading(true)
     const res = await requestFn(dispatch, {
       url: '/IRforCN/Retrieval/probabilityModel/search',
@@ -873,6 +963,15 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
         break
       case 3:
         setSearchSimilarityResult(result as QuerySimilarityResult[])
+        if (isStudy) {
+          var localData = getLocalStore('StudyProbability') != null ? getLocalStore('StudyProbability') : {}
+          localData['searchSimilarityResult'] = result as QuerySimilarityResult[]
+          setLocalStore('StudyProbability', localData)
+        } else {
+          var localData = getLocalStore('ExamProbability') != null ? getLocalStore('ExamProbability') : {}
+          localData['searchSimilarityResult'] = result as QuerySimilarityResult[]
+          setLocalStore('ExamProbability', localData)
+        }
         break
       default:
         setSearchPreProcessResult(result as VectorSpacePreProcessQuery)
@@ -1101,11 +1200,11 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
       url: '/score/updateSubScore',
       method: 'post',
       params: {
-        experimentId:6,
+        experimentId: 6
       }
     })
     setNextLoading(false)
-    if(res_1 && res_1.status === 200 && res_1.data && res_1.data.code === 0){
+    if (res_1 && res_1.status === 200 && res_1.data && res_1.data.code === 0) {
       successTips('子实验分数保存成功', '')
       setNextLoading(true)
       const res = await requestFn(dispatch, {
@@ -1124,8 +1223,8 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
       } else {
         errorTips('保存实验操作失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
       }
-    }else{
-      errorTips("子实验分数保存失败", res_1 && res_1.data && res_1.data.msg ? res_1.data.msg : '请求错误，请重试！')
+    } else {
+      errorTips('子实验分数保存失败', res_1 && res_1.data && res_1.data.msg ? res_1.data.msg : '请求错误，请重试！')
     }
   }
 
