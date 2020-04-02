@@ -78,7 +78,7 @@ const ExperimentComponent = (props: RouteComponentProps) => {
       removeLocalStore('StudyInvertedIndex')
       removeLocalStore('StudyBoolean')
       removeLocalStore('StudyLanguage')
-      removeLocalStore('StudyVectorSpace')
+      removeLocalStore('StudyVector')
       removeLocalStore('StudyProbability')
       removeLocalStore('StudyEvaluation')
       for(var i=1;i<8;i++){
