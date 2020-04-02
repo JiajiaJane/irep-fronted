@@ -186,6 +186,8 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
   var selectedQuery0 = '' //请对模型进行调试中的选项值
   var smoothParam0 = 0.5 //请选择我的TF模型中的平滑系数
   var formulaId0 = 1 //请选择我的TF模型中的选项id
+  var StandardData0=[]
+  var TestData0=[]
   var searchQuerySimilarityResult0 = []
   if (isStudy) {
     if (getLocalStore('StudyVector') != null) {
@@ -204,6 +206,15 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
       if (getLocalStore('StudyVector')['searchQuerySimilarityResult'] != null) {
         searchQuerySimilarityResult0 = getLocalStore('StudyVector')['searchQuerySimilarityResult']
       }
+      if(getLocalStore('StudyVector')['StandardData']!=null){
+        StandardData0=getLocalStore('StudyVector')['StandardData']
+      }
+      if(getLocalStore('StudyVector')['TestData']!=null){
+        TestData0=getLocalStore('StudyVector')['TestData']
+      }
+      if(getLocalStore('StudyVector')['isSaved']!=null){
+        isSaved0=getLocalStore('StudyVector')['isSaved']
+      }
     }
   } else {
     if (getLocalStore('ExamVector') != null) {
@@ -221,6 +232,15 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
       }
       if (getLocalStore('ExamVector')['searchQuerySimilarityResult'] != null) {
         searchQuerySimilarityResult0 = getLocalStore('ExamVector')['searchQuerySimilarityResult']
+      }
+      if(getLocalStore('ExamVector')['StandardData']!=null){
+        StandardData0=getLocalStore('ExamVector')['StandardData']
+      }
+      if(getLocalStore('ExamVector')['TestData']!=null){
+        TestData0=getLocalStore('ExamVector')['TestData']
+      }
+      if(getLocalStore('ExamVector')['isSaved']!=null){
+        isSaved0=getLocalStore('ExamVector')['isSaved']
       }
     }
   }
@@ -242,8 +262,8 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
   // 仿真我的搜索引擎步骤索引
   const [currentStepIndex, setCurrentStepIndex] = useState(isSaved ? 7 : 0)
   const [lastStepIndex, setLastStepIndex] = useState(0)
-  const [standardData, setStandardData] = useState<StandardResult[]>([])
-  const [testData, setTestData] = useState<StandardResult[]>([])
+  const [standardData, setStandardData] = useState<StandardResult[]>(StandardData0)
+  const [testData, setTestData] = useState<StandardResult[]>(TestData0)
   // 检索结果
   const [searchResult, setSearchResult] = useState<SearchResult[]>([])
   // 求文档IDF结果
@@ -508,6 +528,17 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
     if (res && res.status === 200 && res.data && res.data.standardResults && res.data.testResults) {
       setStandardData(handleTestRetrieverResult(res.data.standardResults))
       setTestData(handleTestRetrieverResult(res.data.testResults))
+      if(isStudy){
+        var localdata=getLocalStore('StudyVector')!=null?getLocalStore('StudyVector'):{}
+        localdata['StandardData']=handleTestRetrieverResult(res.data.standardResults)
+        localdata['TestData']=handleTestRetrieverResult(res.data.testResults)
+        setLocalStore('StudyVector',localdata)
+      }else{
+        var localdata=getLocalStore('ExamVector')!=null?getLocalStore('ExamVector'):{}
+        localdata['StandardData']=handleTestRetrieverResult(res.data.standardResults)
+        localdata['TestData']=handleTestRetrieverResult(res.data.testResults)
+        setLocalStore('ExamVector',localdata)
+      }
     } else {
       errorTips('计算相似度失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
@@ -675,6 +706,16 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
    */
   const saveOrder = async () => {
     setSaveOrderLoading(true)
+    setIsSaved(true)
+    if(isStudy){
+      var localData=getLocalStore('StudyVector')!=null?getLocalStore('StudyVector'):{}
+      localData['isSaved']=true
+      setLocalStore('StudyVector',localData)
+    }else{
+      var localData=getLocalStore('ExamVector')!=null?getLocalStore('ExamVector'):{}
+      localData['isSaved']=true
+      setLocalStore('ExamVector',localData)
+    }
     const res = await requestFn(dispatch, {
       url: '/score/updateRankingScore', // 接口还没完成，这里是个假的示例
       method: 'post',
@@ -686,11 +727,9 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
     if (res && res.status === 200 && res.data && res.data.code === 0) {
       successTips('保存顺序成功', '')
       updateSaveOrderBtnStatus()
-      setIsSaved(true)
     } else {
       // 保存顺序失败
       errorTips('保存顺序失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
-      setIsSaved(true)
     }
     setSaveOrderLoading(false)
   }
@@ -847,13 +886,9 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
     }
   }
 
-  /**
-   * 渲染卡片排序区域
-   */
-  const renderCardSection = () => {
-    return (
-      <>
-        <div className={styles.ExamBox}>
+  const renderEmptyCards=()=>{
+    return(
+      <div className={styles.ExamBox}>
           <div className={styles.BoxWrapper}>
             <div className={styles.BoxGroup}>
               <div
@@ -922,11 +957,21 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
             </div>
           </div>
         </div>
+      )
+  }
+
+  /**
+   * 渲染卡片排序区域
+   */
+  const renderCardSection = () => {
+    return (
+      <>
+        <div className={styles.ExamBox}>{renderEmptyCards()}</div>
         <div className={styles.BoxContainer}>{renderCards()}</div>
         <div className={styles.SaveOrder}>
           <Button
             type="primary"
-            disabled={!state.saveOrderBtn.vectorSpace.completed || state.saveOrderBtn.vectorSpace.saved}
+            // disabled={!state.saveOrderBtn.vectorSpace.completed || state.saveOrderBtn.vectorSpace.saved}
             loading={saveOrderLoading}
             onClick={saveOrder}>
             保存
@@ -1085,7 +1130,8 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
    * 渲染检索步骤
    */
   const renderSearchSteps = () => {
-    if (state.saveOrderBtn.vectorSpace.saved) {
+    // if (state.saveOrderBtn.vectorSpace.saved) {
+    if(isSaved0){
       return (
         <div>
           <div className={styles.ExamBox}>
@@ -1456,7 +1502,7 @@ const VectorSpaceExperimentComponent = (props: RouteComponentProps) => {
       <Button
         type="primary"
         loading={nextLoading}
-        disabled={lastStepIndex !== 8}
+        disabled={!isSaved}
         onClick={goNextExperiment}
         className={styles.NextBtn}>
         下一步

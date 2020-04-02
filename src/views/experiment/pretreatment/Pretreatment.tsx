@@ -23,8 +23,8 @@ const PretreatmentComponet = (props: RouteComponentProps) => {
   var isSaved0=false
   if(tabDisabled0){
     if(getLocalStore('StudyPretreatment')!=null){
-      if(getLocalStore('Studypretreatment')['isSaved']){
-        isSaved0=getLocalStore('Studypretreatment')['isSaved']
+      if(getLocalStore('StudyPretreatment')['isSaved']){
+        isSaved0=getLocalStore('StudyPretreatment')['isSaved']
       }
     }
   }else{

@@ -450,7 +450,7 @@ const LanguageExperimentComponent = (props: RouteComponentProps) => {
         <div className={styles.SaveOrder}>
           <Button
             type="primary"
-            disabled={!state.saveOrderBtn.language.completed || state.saveOrderBtn.language.saved}
+            // disabled={!state.saveOrderBtn.language.completed || state.saveOrderBtn.language.saved}
             loading={saveOrderLoading}
             onClick={saveOrder}>
             保存

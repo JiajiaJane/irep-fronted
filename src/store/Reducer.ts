@@ -41,13 +41,13 @@ export default function reducer(state: State = INITIAL_STATE, action: Actions) {
             saved: true
           }
         }
-      default:
-        return {
-          bool: {
-            ...state.saveOrderBtn.probability,
-            saved: true
-          }
-        }
+      // default:
+      //   return {
+      //     bool: {
+      //       ...state.saveOrderBtn.probability,
+      //       saved: true
+      //     }
+      //   }
     }
   }
 

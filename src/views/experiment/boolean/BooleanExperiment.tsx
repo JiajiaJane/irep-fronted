@@ -366,7 +366,7 @@ const BooleanExperimentComponent = (props: BooleanExperimentProps) => {
         <div className={styles.SaveOrder}>
           <Button
             type="primary"
-            disabled={!state.saveOrderBtn.bool.completed || state.saveOrderBtn.bool.saved}
+            // disabled={!state.saveOrderBtn.bool.completed || state.saveOrderBtn.bool.saved}
             loading={saveOrderLoading}
             onClick={saveOrder}>
             保存

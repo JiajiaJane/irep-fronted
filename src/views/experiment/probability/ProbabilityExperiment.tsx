@@ -178,9 +178,10 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
   var selectedQuery0 = ''
   var k0 = 1
   var b0 = 0.5
+  var StandardData0=[]
+  var TestData0=[]
   var searchSimilarityResult0 = []
-  // 判断是否已经实验过只是回退
-  const [isSaved, setIsSaved] = useState(isSaved0)
+  
   if (isStudy) {
     if (getLocalStore('StudyProbability') != null) {
       if (getLocalStore('StudyProbability')['query'] != null) {
@@ -197,6 +198,15 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
       }
       if (getLocalStore('StudyProbability')['selectedQuery'] != null) {
         selectedQuery0 = getLocalStore('StudyProbability')['selectedQuery']
+      }
+      if (getLocalStore('StudyProbability')['isSaved'] != null) {
+        isSaved0 = getLocalStore('StudyProbability')['isSaved']
+      }
+      if(getLocalStore('StudyProbability')['StandardData']!=null){
+        StandardData0=getLocalStore('StudyProbability')['StandardData']
+      }
+      if(getLocalStore('StudyProbability')['TestData']!=null){
+        TestData0=getLocalStore('StudyProbability')['TestData']
       }
     }
   } else {
@@ -216,10 +226,21 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
       if (getLocalStore('ExamProbability')['selectedQuery'] != null) {
         selectedQuery0 = getLocalStore('ExamProbability')['selectedQuery']
       }
+      if (getLocalStore('ExamProbability')['isSaved'] != null) {
+        isSaved0 = getLocalStore('ExamProbability')['isSaved']
+      }
+      if(getLocalStore('ExamProbability')['StandardData']!=null){
+        StandardData0=getLocalStore('ExamProbability')['StandardData']
+      }
+      if(getLocalStore('ExamProbability')['TestData']!=null){
+        TestData0=getLocalStore('ExamProbability')['TestData']
+      }
     }
   }
   const dispatch: Dispatch<Actions> = useDispatch()
   const state: State = useMappedState(useCallback((globalState: State) => globalState, []))
+  // 判断是否已经实验过只是回退
+  const [isSaved, setIsSaved] = useState(isSaved0)
   // 保存顺序加载状态
   const [saveOrderLoading, setSaveOrderLoading] = useState(false)
   //仿真我的搜索引擎输入框中的值
@@ -234,8 +255,9 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(isSaved ? 3 : 0)
   const [lastStepIndex, setLastStepIndex] = useState(0)
   const [selectedQuery, setSelectedQuery] = useState(selectedQuery0)
-  const [standardData, setStandardData] = useState<StandardResult[]>([])
-  const [testData, setTestData] = useState<StandardResult[]>([])
+  // 标准与测试
+  const [standardData, setStandardData] = useState<StandardResult[]>(StandardData0)
+  const [testData, setTestData] = useState<StandardResult[]>(TestData0)
   // 检索结果
   const [searchResult, setSearchResult] = useState<SearchResult[]>([])
   // 求索引项结果
@@ -243,7 +265,7 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
   // 求系数bij结果
   const [searchBIJResult, setSearchBIJResult] = useState<QueryBIJResult[]>([])
   // 求相似度及相似度降序排序的结果
-  const [searchSimilarityResult, setSearchSimilarityResult] = useState<QuerySimilarityResult[]>([])
+  const [searchSimilarityResult, setSearchSimilarityResult] = useState<QuerySimilarityResult[]>(searchSimilarityResult0)
   const [nextLoading, setNextLoading] = useState(false)
   const [savedK, setSavedK] = useState(false)
   const [saveKLoading, setSaveKLoading] = useState(false)
@@ -564,6 +586,16 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
    */
   const saveOrder = async () => {
     setSaveOrderLoading(true)
+    setIsSaved(true)
+    if(isStudy){
+      var localData=getLocalStore('StudyProbability')!=null?getLocalStore('StudyProbability'):{}
+      localData['isSaved']=true
+      setLocalStore('StudyProbability',localData)
+    }else{
+      var localData=getLocalStore('ExamProbability')!=null?getLocalStore('ExamProbability'):{}
+      localData['isSaved']=true
+      setLocalStore('ExamProbability',localData)
+    }
     const res = await requestFn(dispatch, {
       url: '/score/updateRankingScore',
       method: 'post',
@@ -575,10 +607,8 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
     if (res && res.status === 200 && res.data && res.data.code === 0) {
       successTips('保存顺序成功', '')
       updateSaveOrderBtnStatus()
-      setIsSaved(true)
     } else {
       errorTips('保存顺序失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
-      setIsSaved(true)
     }
     setSaveOrderLoading(false)
   }
@@ -792,6 +822,17 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
     if (res && res.status === 200 && res.data && res.data.standardResults && res.data.testResults) {
       setStandardData(handleTestRetrieverResult(res.data.standardResults))
       setTestData(handleTestRetrieverResult(res.data.testResults))
+      if(isStudy){
+        var localdata=getLocalStore('StudyProbability')!=null?getLocalStore('StudyProbability'):{}
+        localdata['StandardData']=handleTestRetrieverResult(res.data.standardResults)
+        localdata['TestData']=handleTestRetrieverResult(res.data.testResults)
+        setLocalStore('StudyProbability',localdata)
+      }else{
+        var localdata=getLocalStore('ExamProbability')!=null?getLocalStore('ExamProbability'):{}
+        localdata['StandardData']=handleTestRetrieverResult(res.data.standardResults)
+        localdata['TestData']=handleTestRetrieverResult(res.data.testResults)
+        setLocalStore('ExamProbability',localdata)
+      }
     } else {
       errorTips('计算相似度失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
@@ -1027,7 +1068,8 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
    * 渲染检索步骤
    */
   const renderSearchSteps = () => {
-    if (state.saveOrderBtn.probability.saved) {
+    // if (state.saveOrderBtn.probability.saved) {
+    if(isSaved0){
       return (
         <div>
           <div className={styles.ExamBox}>
@@ -1248,7 +1290,7 @@ const ProbabilityExperimentComponent = (props: RouteComponentProps) => {
         <Button
           type="primary"
           loading={nextLoading}
-          disabled={lastStepIndex !== 4}
+          disabled={!isSaved}
           onClick={goNextExperiment}
           className={styles.NextBtn}>
           下一步

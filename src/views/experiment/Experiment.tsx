@@ -17,7 +17,7 @@ const ExperimentComponent = (props: RouteComponentProps) => {
   const dispatch: Dispatch<Actions> = useDispatch()
   // 选择学习模式还是考核模式，学习模式为0，考核模式为1
   const[modal,setModal]=useState('0')
-
+  
   /**
    * 错误提示
    */
