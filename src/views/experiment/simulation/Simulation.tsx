@@ -8,7 +8,7 @@ import { requestFn } from '../../../utils/request'
 import { useDispatch } from '../../../store/Store'
 import { Actions } from '../../../store/Actions'
 import { SearchResult } from '../../../modal/Search'
-import { setStore, getStore } from '../../../utils/util'
+import { setStore, getStore, getLocalStore, removeLocalStore } from '../../../utils/util'
 import SearchImg from '../../../assets/simulation/search.png'
 
 const { Search } = Input
@@ -23,6 +23,7 @@ const SimulationComponent = (props: RouteComponentProps) => {
   const [loading, setLoading] = useState(false)
   const [finishLoading, setFinishLoading] = useState(false)
   const [query, setQuery] = useState('')
+  const isStudy=getLocalStore('modal')=='0'
 
   /** 点击完成，保存实验相关信息 */
   const saveScore = async () => {
@@ -32,11 +33,24 @@ const SimulationComponent = (props: RouteComponentProps) => {
       url: '/score/updateUserScore',
       method: 'post',
     })
-    console.log(res_2)
     if(res_2&& res_2.status === 200 && res_2.data && res_2.data.code === 0){
       successTips('总成绩保存成功', '')
       if(getStore("source")=="0"){
         setStore('finishedAllExperiments', 'yes')
+        // 清空本地记录
+        if(!isStudy){
+          removeLocalStore('ExamPretreatment')
+          removeLocalStore('ExamInvertedIndex')
+          removeLocalStore('ExamBoolean')
+          removeLocalStore('ExamLanguage')
+          removeLocalStore('ExamVectorSpace')
+          removeLocalStore('ExamProbability')
+          removeLocalStore('ExamEvaluation')
+          removeLocalStore('modal')
+          for(var i=1;i<8;i++){
+            removeLocalStore('examAnswer'+i)
+          }
+        }
         props.history.replace('/report')
       }
       else if(getStore("source")=="1"){
@@ -71,6 +85,19 @@ const SimulationComponent = (props: RouteComponentProps) => {
         setFinishLoading(false)
         if (res && res.status === 200 && res.data && res.data.code === 0) {
           setStore('finishedAllExperiments', 'yes')
+          if(!isStudy){
+            removeLocalStore('ExamPretreatment')
+            removeLocalStore('ExamInvertedIndex')
+            removeLocalStore('ExamBoolean')
+            removeLocalStore('ExamLanguage')
+            removeLocalStore('ExamVectorSpace')
+            removeLocalStore('ExamProbability')
+            removeLocalStore('ExamEvaluation')
+            removeLocalStore('modal')
+            for(var i=1;i<8;i++){
+              removeLocalStore('examAnswer'+i)
+            }
+          }
           props.history.replace('/report')
         } else {
           errorTips('操作失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')

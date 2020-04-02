@@ -37,14 +37,12 @@ const InvertedIndexComponent = (props: RouteComponentProps) => {
       }
     }
   }else{
-    if(getLocalStore('StudyInvertedIndex')!=null){
-      if(getLocalStore('StudyInvertedIndex')['isSaved']){
-        isSaved0=getLocalStore('StudyInvertedIndex')['isSaved']
+    if(getLocalStore('ExamInvertedIndex')!=null){
+      if(getLocalStore('ExamInvertedIndex')['isSaved']){
+        isSaved0=getLocalStore('ExamInvertedIndex')['isSaved']
       }
     }
   }
-
-  console.log(isSaved0)
 
   useEffect(() => {
     /**

@@ -22,15 +22,15 @@ const PretreatmentComponet = (props: RouteComponentProps) => {
   const [tabDisabled0,settabDisabled0 ]= useState(getLocalStore('modal') == '0') //学习状态为0
   var isSaved0=false
   if(tabDisabled0){
-    if(getLocalStore('Studypretreatment')!=null){
+    if(getLocalStore('StudyPretreatment')!=null){
       if(getLocalStore('Studypretreatment')['isSaved']){
         isSaved0=getLocalStore('Studypretreatment')['isSaved']
       }
     }
   }else{
-    if(getLocalStore('Exampretreatment')!=null){
-      if(getLocalStore('Exampretreatment')['isSaved']){
-        isSaved0=getLocalStore('Exampretreatment')['isSaved']
+    if(getLocalStore('ExamPretreatment')!=null){
+      if(getLocalStore('ExamPretreatment')['isSaved']){
+        isSaved0=getLocalStore('ExamPretreatment')['isSaved']
       }
     }
   }

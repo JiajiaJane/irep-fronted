@@ -20,6 +20,7 @@ import {
   PerformaceKeys,
   ValueKeys
 } from '../../../modal/Performance'
+import { getLocalStore, setLocalStore } from '../../../utils/util'
 
 /**
  * 列对齐方式类型(与ant-design保持一致)
@@ -171,26 +172,108 @@ interface EvaluationExperimentProps extends RouteComponentProps, FormComponentPr
 
 const EvaluationExperimentForm = (props: EvaluationExperimentProps) => {
   const dispatch: Dispatch<Actions> = useDispatch()
+  const isStudy=getLocalStore('modal')=='0'
+  // 选择的标准查询
+  var SelectedQuery0=''
+  // 选择的模型
+  var ModelName0='boolModel'
+  var StandardData0=[]
+  var TestData0=[]
+  var RocOption0={}
+  var PerformanceOption0={}
+  var PrOption0={}
+  var RadarOption0={}
+  var AnalysisText0=''
+  // 要仿真的模型
+  var ModelType0='boolModel'
+  if(isStudy){
+    if(getLocalStore('StudyEvaluation')!=null){
+      if(getLocalStore('StudyEvaluation')['SelectedQuery']){
+        SelectedQuery0=getLocalStore('StudyEvaluation')['SelectedQuery']
+      }
+      if(getLocalStore('StudyEvaluation')['ModelName']){
+        ModelName0=getLocalStore('StudyEvaluation')['ModelName']
+      }
+      if(getLocalStore('StudyEvaluation')['ModelType']){
+        ModelType0=getLocalStore('StudyEvaluation')['ModelType']
+      }
+      if(getLocalStore('StudyEvaluation')['StandardData']){
+        StandardData0=getLocalStore('StudyEvaluation')['StandardData']
+      }
+      if(getLocalStore('StudyEvaluation')['TestData']){
+        TestData0=getLocalStore('StudyEvaluation')['TestData']
+      }
+      if(getLocalStore('StudyEvaluation')['AnalysisText']){
+        AnalysisText0=getLocalStore('StudyEvaluation')['AnalysisText']
+      }
+      if(getLocalStore('StudyEvaluation')['RocOption']){
+        RocOption0=getLocalStore('StudyEvaluation')['RocOption']
+      }
+      if(getLocalStore('StudyEvaluation')['PerformanceOption']){
+        PerformanceOption0=getLocalStore('StudyEvaluation')['PerformanceOption']
+      }
+      if(getLocalStore('StudyEvaluation')['PrOption']){
+        PrOption0=getLocalStore('StudyEvaluation')['PrOption']
+      }
+      if(getLocalStore('StudyEvaluation')['RadarOption']){
+        RadarOption0=getLocalStore('StudyEvaluation')['RadarOption']
+      }
+    }
+  }else{
+    if(getLocalStore('ExamEvaluation')!=null){
+      if(getLocalStore('ExamEvaluation')['SelectedQuery']){
+        SelectedQuery0=getLocalStore('ExamEvaluation')['SelectedQuery']
+      }
+      if(getLocalStore('ExamEvaluation')['ModelName']){
+        ModelName0=getLocalStore('ExamEvaluation')['ModelName']
+      }
+      if(getLocalStore('ExamEvaluation')['ModelType']){
+        ModelType0=getLocalStore('ExamEvaluation')['ModelType']
+      }
+      if(getLocalStore('ExamEvaluation')['StandardData']){
+        StandardData0=getLocalStore('ExamEvaluation')['StandardData']
+      }
+      if(getLocalStore('ExamEvaluation')['TestData']){
+        TestData0=getLocalStore('ExamEvaluation')['TestData']
+      }
+      if(getLocalStore('ExamEvaluation')['AnalysisText']){
+        AnalysisText0=getLocalStore('ExamEvaluation')['AnalysisText']
+      }
+      if(getLocalStore('ExamEvaluation')['RocOption']){
+        RocOption0=getLocalStore('ExamEvaluation')['RocOption']
+      }
+      if(getLocalStore('ExamEvaluation')['PerformanceOption']){
+        PerformanceOption0=getLocalStore('ExamEvaluation')['PerformanceOption']
+      }
+      if(getLocalStore('ExamEvaluation')['PrOption']){
+        PrOption0=getLocalStore('ExamEvaluation')['PrOption']
+      }
+      if(getLocalStore('ExamEvaluation')['RadarOption']){
+        RadarOption0=getLocalStore('ExamEvaluation')['RadarOption']
+      }
+    }
+  }
+
   const [calculationLoading, setCalculationLoading] = useState(false)
   const [performanceLoading, setPerformanceLoading] = useState(false)
   // 性能对比图配置
-  const [performanceOption, setPerformanceOption] = useState()
+  const [performanceOption, setPerformanceOption] = useState(PerformanceOption0)
   // roc曲线图配置
-  const [rocOption, setRocOption] = useState()
+  const [rocOption, setRocOption] = useState(RocOption0)
   // 正确率-召回率曲线图配置
-  const [prOption, setPrOption] = useState()
+  const [prOption, setPrOption] = useState(PrOption0)
   // 性能对比雷达图对比
-  const [radarOption, setRadarOption] = useState()
+  const [radarOption, setRadarOption] = useState(RadarOption0)
   // 综合分析
-  const [analysisText, setAnalysisText] = useState('')
+  const [analysisText, setAnalysisText] = useState(AnalysisText0)
   const [saveAnalysLoading, setSaveAnalysLoading] = useState(false)
   // 需要仿真的模型
-  const [modelType, setModelType] = useState('boolModel')
-  const [selectedQuery, setSelectedQuery] = useState('')
-  const [modelName, setModelName] = useState('boolModel')
-  const [standardData, setStandardData] = useState<StandardResult[]>([])
-  const [testData, setTestData] = useState<StandardResult[]>([])
-  const [calculationDisabled, setCalculationDisabled] = useState(true)
+  const [modelType, setModelType] = useState(ModelType0)
+  const [selectedQuery, setSelectedQuery] = useState(SelectedQuery0)
+  const [modelName, setModelName] = useState(ModelName0)
+  const [standardData, setStandardData] = useState<StandardResult[]>(StandardData0)
+  const [testData, setTestData] = useState<StandardResult[]>(TestData0)
+  const [calculationDisabled, setCalculationDisabled] = useState(false)
   const [selectModelLoading, setSelecteModelLoading] = useState(false)
   const { getFieldDecorator, getFieldsValue } = props.form
 
@@ -480,6 +563,19 @@ const EvaluationExperimentForm = (props: EvaluationExperimentProps) => {
       setRocOption(tmpRocOption)
       setPrOption(tmpPrOption)
       getRadarPerformance()
+      if(isStudy){
+        var localdata=getLocalStore('StudyEvaluation')!=null?getLocalStore('StudyEvaluation'):{}
+        localdata['PrOption']=tmpPrOption
+        localdata['RocOption']=tmpRocOption
+        localdata['PerformanceOption']=option
+        setLocalStore('StudyEvaluation',localdata)
+      }else{
+        var localdata=getLocalStore('ExamEvaluation')!=null?getLocalStore('ExamEvaluation'):{}
+        localdata['PrOption']=tmpPrOption
+        localdata['RocOption']=tmpRocOption
+        localdata['PerformanceOption']=option
+        setLocalStore('ExamEvaluation',localdata)
+      }
     } else {
       errorTips('获取模型性能对比失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
       const option = getChartBarOption(yAxisData, seriesData)
@@ -491,6 +587,21 @@ const EvaluationExperimentForm = (props: EvaluationExperimentProps) => {
       setPrOption(tmpPrOption)
       setRadarOption(tmpRadarOption)
       setPerformanceLoading(false)
+      if(isStudy){
+        var localdata=getLocalStore('StudyEvaluation')!=null?getLocalStore('StudyEvaluation'):{}
+        localdata['PrOption']=tmpPrOption
+        localdata['RocOption']=tmpRocOption
+        localdata['PerformanceOption']=option
+        localdata['RadarOption']=tmpRadarOption
+        setLocalStore('StudyEvaluation',localdata)
+      }else{
+        var localdata=getLocalStore('ExamEvaluation')!=null?getLocalStore('ExamEvaluation'):{}
+        localdata['PrOption']=tmpPrOption
+        localdata['RocOption']=tmpRocOption
+        localdata['PerformanceOption']=option
+        localdata['RadarOption']=tmpRadarOption
+        setLocalStore('ExamEvaluation',localdata)
+      }
     }
   }
 
@@ -548,6 +659,15 @@ const EvaluationExperimentForm = (props: EvaluationExperimentProps) => {
     })
     if (res && res.status && res.data && res.data.code === 0) {
       successTips('保存成功')
+      if(isStudy){
+        var localdata=getLocalStore('StudyEvaluation')!=null?getLocalStore('StudyEvaluation'):{}
+        localdata['AnalysisText']=analysisText
+        setLocalStore('StudyEvaluation',localdata)
+      }else{
+        var localdata=getLocalStore('ExamEvaluation')!=null?getLocalStore('ExamEvaluation'):{}
+        localdata['AnalysisText']=analysisText
+        setLocalStore('ExamEvaluation', localdata)
+      }
     } else {
       errorTips('保存分析失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
     }
@@ -568,6 +688,15 @@ const EvaluationExperimentForm = (props: EvaluationExperimentProps) => {
    */
   const updateModelName = (e: RadioChangeEvent) => {
     setModelName(e.target.value)
+    if(isStudy){
+      var localdata=getLocalStore('StudyEvaluation')!=null?getLocalStore('StudyEvaluation'):{}
+      localdata['ModelName']=e.target.value
+      setLocalStore('StudyEvaluation',localdata)
+    }else{
+      var localdata=getLocalStore('ExamEvaluation')!=null?getLocalStore('ExamEvaluation'):{}
+      localdata['ModelName']=e.target.value
+      setLocalStore('ExamEvaluation',localdata)
+    }
   }
 
   /**
@@ -576,6 +705,15 @@ const EvaluationExperimentForm = (props: EvaluationExperimentProps) => {
   const calculate = () => {
     const fieldValue = getFieldsValue(['selectedQuery'])
     setSelectedQuery(fieldValue.selectedQuery)
+    if(isStudy){
+        var localdata=getLocalStore('StudyEvaluation')!=null?getLocalStore('StudyEvaluation'):{}
+        localdata['SelectedQuery']=fieldValue.selectedQuery
+        setLocalStore('StudyEvaluation',localdata)
+    }else{
+        var localdata=getLocalStore('ExamEvaluation')!=null?getLocalStore('ExamEvaluation'):{}
+        localdata['SelectedQuery']=fieldValue.selectedQuery
+        setLocalStore('ExamEvaluation',localdata)
+    }
   }
 
   /**
@@ -583,6 +721,15 @@ const EvaluationExperimentForm = (props: EvaluationExperimentProps) => {
    */
   const updateModelType = (type: string) => {
     setModelType(type)
+    if(isStudy){
+      var localdata=getLocalStore('StudyEvaluation')!=null?getLocalStore('StudyEvaluation'):{}
+      localdata['ModelType']=type
+      setLocalStore('StudyEvaluation',localdata)
+    }else{
+      var localdata=getLocalStore('ExamEvaluation')!=null?getLocalStore('ExamEvaluation'):{}
+      localdata['ModelType']=type
+      setLocalStore('ExamEvaluation',localdata)
+    }
   }
 
   /**
@@ -763,7 +910,8 @@ const EvaluationExperimentForm = (props: EvaluationExperimentProps) => {
       url: '/IRforCN/performance/averagePerformance',
       method: 'post'
     })
-    if (res && res.status === 200 && res.data) {
+  
+    if (res && res.status === 200 && res.data && res.data.code!==-1) {
       const series = handleAveragePerformanceResult(res.data)
       const selected = handleRadarSelected(series)
       const tmpRadarOption = getRadarOption(radarIndicator, series, radarLegend, selected)
@@ -865,7 +1013,7 @@ const EvaluationExperimentForm = (props: EvaluationExperimentProps) => {
       </div>
       <div className={styles.ModalWrapper}>
         <Radio.Group
-          defaultValue="boolModel"
+          defaultValue={modelName}
           buttonStyle="solid"
           className={`GlobalEvaluationRadioGroup ${styles.RadioGroup}`}
           onChange={updateModelName}>

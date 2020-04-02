@@ -76,8 +76,14 @@ const ExperimentComponent = (props: RouteComponentProps) => {
     if(modal=='0'){
       removeLocalStore('StudyPretreatment')
       removeLocalStore('StudyInvertedIndex')
-      removeLocalStore('studyAnswer1')
-      removeLocalStore('studyAnswer2')
+      removeLocalStore('StudyBoolean')
+      removeLocalStore('StudyLanguage')
+      removeLocalStore('StudyVectorSpace')
+      removeLocalStore('StudyProbability')
+      removeLocalStore('StudyEvaluation')
+      for(var i=1;i<8;i++){
+        removeLocalStore('studyAnswer'+i)
+      }
       props.history.replace('/experiment/entry')
     }
   }
@@ -87,7 +93,7 @@ const ExperimentComponent = (props: RouteComponentProps) => {
       <div className={styles.Content}>
         <div>
           <Modal
-            title="20px to Top"
+            title=""
             style={{ top: 20 }}
             visible={modalVisible}
             onOk={OkClick}
