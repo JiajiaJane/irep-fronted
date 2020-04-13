@@ -698,7 +698,6 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
       "19"	:	quiz19	,
       "20"	:	quiz20	
     }
-    console.log(data)
     const res = await requestFn(dispatch, {
       url: '/score/updateInvertedScore',
       method: 'post',
@@ -712,7 +711,6 @@ const InvertedIndexExperimentComponent = (props: RouteComponentProps) => {
         setLocalStore('StudyInvertedIndex',localData)
       }else{
         var localData=getLocalStore('ExamInvertedIndex')!=null?getLocalStore('ExamInvertedIndex'):{}
-        console.log(localData)
         localData['InvertedAnswer']=data
         setLocalStore('ExamInvertedIndex',localData)
       } 

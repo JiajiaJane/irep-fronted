@@ -39,7 +39,7 @@ const Report= () => {
         url: '/report/getReport',
         method: 'get'
       })
-      console.log(res)
+      // console.log(res)
       if (res && res.status === 200) {
         if(res.data==null){
           alert("暂无实验报告，请前往'我的实验'")

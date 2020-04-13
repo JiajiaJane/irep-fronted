@@ -125,7 +125,6 @@ const EntryComponent = (props: RouteComponentProps) => {
           experimentId: 1,
         }
       })
-      console.log(res_1)
       if(res_1 && res_1.status === 200 && res_1.data && res_1.data.code === 0){
         successTips('子实验分数保存成功', '')
         setTimeout(() => {

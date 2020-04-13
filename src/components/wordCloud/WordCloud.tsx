@@ -114,7 +114,7 @@ const WordCloudComponent = (props: WordCloudProps) => {
           operationName: '词云分析'
         }
       })
-      console.log(res)
+      // console.log(res)
       if (res && res.status === 200 && res.data && res.data.code === 0) {
         successTips('分析成功', '操作-"词云分析"已保存')
       } else {
@@ -150,7 +150,6 @@ const WordCloudComponent = (props: WordCloudProps) => {
         if(isStudy){
           var localData=getLocalStore('StudyPretreatment')!=null?getLocalStore('StudyPretreatment'):{}
           localData['wordcloudfieldValue'+props.wordCloudId]=fieldValue
-          console.log(localData)
           setLocalStore('StudyPretreatment',localData)
         }else{
           var localData=getLocalStore('ExamPretreatment')!=null?getLocalStore('ExamPretreatment'):{}
