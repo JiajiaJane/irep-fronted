@@ -89,7 +89,7 @@ const PretreatmentComponet = (props: RouteComponentProps) => {
   }
 
   const nextStep= () => {
-    answerTips('构建倒排索引表之前，应先进行数据预处理，否咋后续实验会出错' )
+    answerTips('构建倒排索引表之前，应先进行数据预处理，否则后续实验会出错' )
     props.history.replace('/experiment/invertedIndex')
   }
 

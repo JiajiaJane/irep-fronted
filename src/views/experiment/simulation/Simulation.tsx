@@ -35,25 +35,22 @@ const SimulationComponent = (props: RouteComponentProps) => {
     })
     if(res_2&& res_2.status === 200 && res_2.data && res_2.data.code === 0){
       successTips('总成绩保存成功', '')
-      if(getStore("source")=="0"){
-        setStore('finishedAllExperiments', 'yes')
+      setStore('finishedAllExperiments', 'yes')
         // 清空本地记录
-        if(!isStudy){
-          removeLocalStore('ExamPretreatment')
-          removeLocalStore('ExamInvertedIndex')
-          removeLocalStore('ExamBoolean')
-          removeLocalStore('ExamLanguage')
-          removeLocalStore('ExamVector')
-          removeLocalStore('ExamProbability')
-          removeLocalStore('ExamEvaluation')
-          removeLocalStore('modal')
-          for(var i=1;i<8;i++){
-            removeLocalStore('examAnswer'+i)
-          }
+      if(!isStudy){
+        removeLocalStore('ExamPretreatment')
+        removeLocalStore('ExamInvertedIndex')
+        removeLocalStore('ExamBoolean')
+        removeLocalStore('ExamLanguage')
+        removeLocalStore('ExamVector')
+        removeLocalStore('ExamProbability')
+        removeLocalStore('ExamEvaluation')
+        removeLocalStore('modal')
+        for(var i=1;i<8;i++){
+          removeLocalStore('examAnswer'+i)
         }
-        props.history.replace('/report')
       }
-      else if(getStore("source")=="1"){
+      if(getStore("source")=="1"){
         // // 获取总成绩？需要与后台讨论
         // const res_1 = await requestFn(dispatch, {
         //   url: '/report/getReport',
@@ -84,25 +81,12 @@ const SimulationComponent = (props: RouteComponentProps) => {
         })
         setFinishLoading(false)
         if (res && res.status === 200 && res.data && res.data.code === 0) {
-          setStore('finishedAllExperiments', 'yes')
-          if(!isStudy){
-            removeLocalStore('ExamPretreatment')
-            removeLocalStore('ExamInvertedIndex')
-            removeLocalStore('ExamBoolean')
-            removeLocalStore('ExamLanguage')
-            removeLocalStore('ExamVector')
-            removeLocalStore('ExamProbability')
-            removeLocalStore('ExamEvaluation')
-            removeLocalStore('modal')
-            for(var i=1;i<8;i++){
-              removeLocalStore('examAnswer'+i)
-            }
-          }
           props.history.replace('/report')
         } else {
           errorTips('操作失败', res && res.data && res.data.msg ? res.data.msg : '请求错误，请重试！')
         }
       }
+      props.history.replace('/report')
     }else{
       errorTips("总成绩保存失败")
     }
